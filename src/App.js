@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import {
@@ -7,8 +7,13 @@ import {
   Route
 } from "react-router-dom";
 import MenuBar from './components/MenuBar'
-import List from './components/List';
-import Register from './components/Register';
+import RealEstateList from './components/RealEstateList';
+import RegisterRealEstate from './components/RegisterRealEstate';
+import { REAL_ESTATE_REPOSITORY } from './config/contracts';
+import { IPFS } from './config/settings'
+import Web3 from 'web3';
+import ipfsClient from "ipfs-http-client";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,7 +23,20 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
   const classes = useStyles();
-  const [realEstates] = React.useState([]);
+  const [realEstateRepositoryContract, setRealEstateRepositoryContract] = React.useState('');
+  const [ipfs] = React.useState(ipfsClient({ host: IPFS.HOST, port: IPFS.PORT, protocol: IPFS.PROTOCOL }));
+
+  const loadBlockChainConfig = async () => {
+    window.ethereum.enable().then(function (accounts) {
+      const web3 = new Web3(Web3.givenProvider);
+      const realEstateRepository = new web3.eth.Contract(REAL_ESTATE_REPOSITORY.ABI, REAL_ESTATE_REPOSITORY.ADDRESS);
+      setRealEstateRepositoryContract(realEstateRepository);
+    });
+  };
+
+  useEffect(() => {
+    loadBlockChainConfig();
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -30,10 +48,15 @@ function App() {
             <div className="content">
               <Switch>
                 <Route path="/register">
-                  <Register realEstates={realEstates} />
+                  <RegisterRealEstate
+                    realEstateRepositoryContract={realEstateRepositoryContract}
+                    ipfs={ipfs}
+                  />
                 </Route>
                 <Route path="/list">
-                  <List  realEstates={realEstates} />
+                  <RealEstateList
+                    ipfs={ipfs}
+                  />
                 </Route>
               </Switch>
             </div>

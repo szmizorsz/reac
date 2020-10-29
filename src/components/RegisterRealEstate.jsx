@@ -2,7 +2,9 @@ import React from 'react'
 import { TextField, Button } from '@material-ui/core/'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import Box from '@material-ui/core/Box';
+import Box from '@material-ui/core/Box'
+import Web3 from 'web3'
+import { GAS_LIMIT } from '../config/settings'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -18,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function Register({ realEstates }) {
+function Register({ realEstateRepositoryContract, ipfs }) {
     const classes = useStyles();
 
     const [proprietor, setProprietor] = React.useState('');
@@ -31,7 +33,9 @@ function Register({ realEstates }) {
     const [longitude, setLongitude] = React.useState('');
     const [height, setHeight] = React.useState('');
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
         const realEstate = {
             proprietor: proprietor,
             externalId: externalId,
@@ -43,7 +47,20 @@ function Register({ realEstates }) {
             longitude: longitude,
             height: height
         }
-        realEstates.push(realEstate);
+
+        const file = await ipfs.add(Buffer.from(JSON.stringify(realEstate)));
+
+        const web3 = new Web3(Web3.givenProvider);
+        const accounts = await web3.eth.getAccounts();
+        let config = {
+            gas: GAS_LIMIT,
+            from: accounts[0]
+        }
+        await realEstateRepositoryContract.methods.registerRealEstate(proprietor, file.path).send(config)
+            .once('receipt', (receipt) => {
+                console.log(receipt);
+            })
+
         setProprietor('');
         setExternalId('');
         setType('');
@@ -53,7 +70,6 @@ function Register({ realEstates }) {
         setLatitude();
         setLongitude();
         setHeight();
-        event.preventDefault();
     }
 
     return (
@@ -122,7 +138,7 @@ function Register({ realEstates }) {
                     variant="outlined"
                     fullWidth
                     id="Latitude"
-                    value={latitude|| ''}
+                    value={latitude || ''}
                     onInput={e => setLatitude(e.target.value)}
                     label="Latitude"
                     type="number"
@@ -131,7 +147,7 @@ function Register({ realEstates }) {
                     variant="outlined"
                     fullWidth
                     id="Longitude"
-                    value={longitude|| ''}
+                    value={longitude || ''}
                     onInput={e => setLongitude(e.target.value)}
                     label="Longitude"
                     type="number"
@@ -140,7 +156,7 @@ function Register({ realEstates }) {
                     variant="outlined"
                     fullWidth
                     id="Height"
-                    value={height|| ''}
+                    value={height || ''}
                     onInput={e => setHeight(e.target.value)}
                     label="Height"
                     type="number"
