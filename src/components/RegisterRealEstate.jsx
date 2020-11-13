@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function Register({ realEstateRepositoryContract, ipfs }) {
+function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
     const classes = useStyles();
 
     const [proprietor, setProprietor] = React.useState('');
@@ -173,4 +173,4 @@ function Register({ realEstateRepositoryContract, ipfs }) {
     )
 }
 
-export default Register;
+export default RegisterRealEstate;

@@ -9,6 +9,7 @@ import {
 import MenuBar from './components/MenuBar'
 import RealEstateList from './components/RealEstateList';
 import RegisterRealEstate from './components/RegisterRealEstate';
+import RealEstateDetail from './components/RealEstateDetail';
 import { REAL_ESTATE_REPOSITORY } from './config/contracts';
 import { IPFS } from './config/settings'
 import Web3 from 'web3';
@@ -55,6 +56,11 @@ function App() {
                 </Route>
                 <Route path="/list">
                   <RealEstateList
+                    ipfs={ipfs}
+                  />
+                </Route>
+                <Route path="/realestate/:tokenId">
+                  <RealEstateDetail
                     ipfs={ipfs}
                   />
                 </Route>

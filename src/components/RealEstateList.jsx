@@ -11,6 +11,7 @@ import Box from '@material-ui/core/Box';
 import { REAL_ESTATE_REPOSITORY } from '../config/contracts';
 import Web3 from 'web3';
 import { BufferList } from "bl";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     table: {
@@ -18,15 +19,14 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function List({ ipfs }) {
+function RealEstateList({ ipfs }) {
     const classes = useStyles();
     const [realEstates, setRealEstates] = React.useState([]);
 
     const web3 = new Web3(Web3.givenProvider);
     const realEstateRepositoryContract = new web3.eth.Contract(REAL_ESTATE_REPOSITORY.ABI, REAL_ESTATE_REPOSITORY.ADDRESS);
 
-    const loadRealEstates = async (setRealEstates) => {
-
+    const loadRealEstates = async () => {
         const nrOfRealEstates = await realEstateRepositoryContract.methods.totalSupply().call();
         const realEstatesFromBlockchain = [];
 
@@ -38,13 +38,15 @@ function List({ ipfs }) {
                     content.append(chunk)
                 }
                 const realEstate = JSON.parse(content.toString());
+                realEstate.tokenURI = tokenURI;
+                realEstate.tokenId = i;
                 realEstatesFromBlockchain.push(realEstate);
             }
         }
         setRealEstates(realEstatesFromBlockchain);
     };
     useEffect(() => {
-        loadRealEstates(setRealEstates);
+        loadRealEstates();
     }, []);
 
     return (
@@ -53,23 +55,25 @@ function List({ ipfs }) {
                 <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
+                            <TableCell>Token Id</TableCell>
+                            <TableCell>External Id</TableCell>
                             <TableCell>Address</TableCell>
                             <TableCell>City</TableCell>
                             <TableCell>Country</TableCell>
                             <TableCell>Type</TableCell>
-                            <TableCell>Proprietor</TableCell>
-                            <TableCell>External Id</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {realEstates.map((row) => (
-                            <TableRow key={row.externalId}>
+                            <TableRow key={row.tokenId}>
+                                <TableCell>
+                                    <Link to={`/realestate/${row.tokenId}`}>{row.tokenId}</Link>
+                                </TableCell>
+                                <TableCell>{row.externalId}</TableCell>
                                 <TableCell>{row.addressLine}</TableCell>
                                 <TableCell>{row.city}</TableCell>
                                 <TableCell>{row.country}</TableCell>
                                 <TableCell>{row.type}</TableCell>
-                                <TableCell>{row.proprietor}</TableCell>
-                                <TableCell>{row.externalId}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -79,4 +83,4 @@ function List({ ipfs }) {
     );
 }
 
-export default List;
+export default RealEstateList;
