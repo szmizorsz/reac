@@ -1,5 +1,5 @@
 export const REAL_ESTATE_REPOSITORY = {
-  ADDRESS: '0x64B0dF8CBDA97Af0D9E67d0679B4E5653f43b0BA',
+  ADDRESS: '0x8438d7Eeae23B4C40E37961E872b21f4063C8977',
   ABI: [
     {
       "inputs": [],
@@ -524,7 +524,7 @@ export const REAL_ESTATE_REPOSITORY = {
 }
 
 export const REAL_ESTATE_PHOTOS = {
-  ADDRESS: '0x9C4Ef7C76525fde32dbE9255B013Aaee4DFB61ca',
+  ADDRESS: '0x5c8CEE735361E28d987Fc9e2F21E2C8CD19E08fA',
   ABI: [
     {
       "anonymous": false,
@@ -558,6 +558,12 @@ export const REAL_ESTATE_PHOTOS = {
           "indexed": false,
           "internalType": "string",
           "name": "cid",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "description",
           "type": "string"
         }
       ],
@@ -609,6 +615,11 @@ export const REAL_ESTATE_PHOTOS = {
           "internalType": "string",
           "name": "cid",
           "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
         }
       ],
       "name": "registerRealEstatePhoto",
@@ -649,11 +660,16 @@ export const REAL_ESTATE_PHOTOS = {
           "type": "uint256"
         }
       ],
-      "name": "getfRealEstatePhotoCidOfIndex",
+      "name": "getRealEstatePhotoOfIndex",
       "outputs": [
         {
           "internalType": "string",
-          "name": "",
+          "name": "cid",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
           "type": "string"
         }
       ],

@@ -1,40 +1,55 @@
-import React, { useEffect } from 'react';
-import { REAL_ESTATE_PHOTOS } from '../config/contracts';
-import Web3 from 'web3';
-import Typography from '@material-ui/core/Typography'
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
+import { IPFS } from '../config/settings'
 
-const RealEstatePhotos = ({ tokenId, ipfs }) => {
-    const [realEstatePhotos, setRealEstatePhotos] = React.useState([]);
+const useStyles = makeStyles((theme) => ({
+    root: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'space-around',
+        overflow: 'hidden',
+        backgroundColor: theme.palette.background.paper,
+    },
+    gridList: {
+        flexWrap: 'nowrap',
+        // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+        transform: 'translateZ(0)'
+    },
+    title: {
+        color: theme.palette.primary.white,
+        fontSize: 10
+    },
+    titleBar: {
+        background:
+            'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+    },
+}));
 
-    const web3 = new Web3(Web3.givenProvider);
-    const realEstatePhotosContract = new web3.eth.Contract(REAL_ESTATE_PHOTOS.ABI, REAL_ESTATE_PHOTOS.ADDRESS);
-
-    const loadRealEstatePhotos = async () => {
-        const realEstatePhotosFromIPFS = [];
-        const nrOfRealEstatePhotos = await realEstatePhotosContract.methods.getNrOfRealEstatePhotos(tokenId).call();
-        for (let i = 0; i < nrOfRealEstatePhotos; i++) {
-            const photoCid = await realEstatePhotosContract.methods.getfRealEstatePhotoCidOfIndex(tokenId, i).call();
-            realEstatePhotosFromIPFS.push(photoCid);
-            console.log(photoCid);
-        }
-        setRealEstatePhotos(realEstatePhotosFromIPFS);
-    };
-
-    useEffect(() => {
-        loadRealEstatePhotos();
-    }, []);
+const RealEstatePhotos = ({ realEstatePhotos }) => {
+    const classes = useStyles();
 
     return (
-        <>
-            <Typography variant="h6" gutterBottom>
-                Photos
-            </Typography>
-            <div>
+        <div className={classes.root}>
+            <GridList className={classes.gridList} cols={3.5}>
                 {realEstatePhotos.map((row) => (
-                    <p key={row}>Photo IPFS content identifier: {row}</p>
+                    <GridListTile key={row.cid + row.description}>
+                        <a href={IPFS.PUBLIC_GATEWAY + row.cid}>
+                            <img src={IPFS.PUBLIC_GATEWAY + row.cid} alt={row.description} className="MuiGridListTile-imgFullHeight" />
+                        </a>
+                        <GridListTileBar
+                            title={row.description}
+                            classes={{
+                                root: classes.titleBar,
+                                title: classes.title,
+                            }}
+                        />
+                    </GridListTile>
                 ))}
-            </div>
-        </>
+            </GridList>
+        </div>
     );
 };
 

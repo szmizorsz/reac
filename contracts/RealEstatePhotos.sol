@@ -3,15 +3,29 @@ pragma solidity ^0.6.2;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract RealEstatePhotos is Ownable {
-    mapping(uint256 => string[]) private cids;
+    struct RealEstatePhoto {
+        string cid;
+        string description;
+    }
 
-    event RealEstatePhotoRegistration(uint256 realEstateId, string cid);
+    mapping(uint256 => RealEstatePhoto[]) private photos;
 
-    function registerRealEstatePhoto(uint256 realEstateId, string memory cid)
-        public
-    {
-        cids[realEstateId].push(cid);
-        emit RealEstatePhotoRegistration(realEstateId, cid);
+    event RealEstatePhotoRegistration(
+        uint256 realEstateId,
+        string cid,
+        string description
+    );
+
+    function registerRealEstatePhoto(
+        uint256 realEstateId,
+        string memory cid,
+        string memory description
+    ) public {
+        RealEstatePhoto memory realEstatePhoto;
+        realEstatePhoto.cid = cid;
+        realEstatePhoto.description = description;
+        photos[realEstateId].push(realEstatePhoto);
+        emit RealEstatePhotoRegistration(realEstateId, cid, description);
     }
 
     function getNrOfRealEstatePhotos(uint256 realEstateId)
@@ -19,15 +33,18 @@ contract RealEstatePhotos is Ownable {
         view
         returns (uint256)
     {
-        return cids[realEstateId].length;
+        return photos[realEstateId].length;
     }
 
-    function getfRealEstatePhotoCidOfIndex(uint256 realEstateId, uint256 index)
+    function getRealEstatePhotoOfIndex(uint256 realEstateId, uint256 index)
         public
         view
-        returns (string memory)
+        returns (string memory cid, string memory description)
     {
-        return cids[realEstateId][index];
+        return (
+            photos[realEstateId][index].cid,
+            photos[realEstateId][index].description
+        );
     }
 
     function destroy() external onlyOwner {
