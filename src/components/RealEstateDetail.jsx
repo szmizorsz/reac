@@ -3,19 +3,41 @@ import { withRouter } from "react-router";
 import RealEstateBaseData from './RealEstateBaseData';
 import RealEstatePhotoUpload from './RealEstatePhotoUpload';
 import RealEstatePhotos from './RealEstatePhotos';
-import { REAL_ESTATE_PHOTOS } from '../config/contracts';
+import { REAL_ESTATE_REPOSITORY, REAL_ESTATE_PHOTOS } from '../config/contracts';
 import Web3 from 'web3';
 import { GAS_LIMIT } from '../config/settings'
+import { BufferList } from "bl";
+import RealEstateMap from './RealEstateMap'
 
 const RealEstateDetail = ({ match, ipfs }) => {
     const { params: { tokenId } } = match;
-
+    const [realEstate, setRealEstate] = React.useState('');
     const [realEstatePhotos, setRealEstatePhotos] = React.useState([]);
     const [description, setDescription] = React.useState('');
     const [file, setFile] = React.useState('');
 
     const web3 = new Web3(Web3.givenProvider);
+    const realEstateRepositoryContract = new web3.eth.Contract(REAL_ESTATE_REPOSITORY.ABI, REAL_ESTATE_REPOSITORY.ADDRESS);
     const realEstatePhotosContract = new web3.eth.Contract(REAL_ESTATE_PHOTOS.ABI, REAL_ESTATE_PHOTOS.ADDRESS);
+
+    const loadRealEstate = async () => {
+        const tokenURI = await realEstateRepositoryContract.methods.tokenURI(tokenId).call();
+        let realEstateFromIPFS;
+        for await (const file of ipfs.get(tokenURI)) {
+            const content = new BufferList()
+            for await (const chunk of file.content) {
+                content.append(chunk)
+            }
+            realEstateFromIPFS = JSON.parse(content.toString());
+            realEstateFromIPFS.tokenURI = tokenURI;
+            realEstateFromIPFS.tokenId = tokenId;
+            setRealEstate(realEstateFromIPFS);
+        }
+    };
+
+    useEffect(() => {
+        loadRealEstate();
+    }, []);
 
     const handlePhotoUploadSubmit = async (event) => {
         event.preventDefault();
@@ -56,7 +78,9 @@ const RealEstateDetail = ({ match, ipfs }) => {
 
     return (
         <>
-            <RealEstateBaseData tokenId={tokenId} ipfs={ipfs} />
+            <RealEstateBaseData realEstate={realEstate} />
+            <RealEstateMap
+                center={[Number(realEstate.latitude), Number(realEstate.longitude)]} />
             <RealEstatePhotos realEstatePhotos={realEstatePhotos} />
             <RealEstatePhotoUpload
                 handleSubmit={handlePhotoUploadSubmit}

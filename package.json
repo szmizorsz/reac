@@ -12,6 +12,7 @@
     "@truffle/hdwallet-provider": "^1.1.1",
     "bl": "^4.0.3",
     "buffer": "^5.7.0",
+    "google-map-react": "^2.1.9",
     "ipfs-http-client": "^48.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

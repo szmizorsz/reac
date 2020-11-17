@@ -6,3 +6,7 @@ export const IPFS = {
     PROTOCOL: "https",
     PUBLIC_GATEWAY: "https://ipfs.io/ipfs/"
 }
+
+export const GOOGLE_MAPS = {
+    API_KEY: "API-KEY"
+}

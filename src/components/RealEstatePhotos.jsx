@@ -4,6 +4,7 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import { IPFS } from '../config/settings'
+import { Box } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,7 +33,7 @@ const RealEstatePhotos = ({ realEstatePhotos }) => {
     const classes = useStyles();
 
     return (
-        <div className={classes.root}>
+        <Box m={3} className={classes.root}>
             <GridList className={classes.gridList} cols={3.5}>
                 {realEstatePhotos.map((row) => (
                     <GridListTile key={row.cid + row.description}>
@@ -49,7 +50,7 @@ const RealEstatePhotos = ({ realEstatePhotos }) => {
                     </GridListTile>
                 ))}
             </GridList>
-        </div>
+        </Box>
     );
 };
 
