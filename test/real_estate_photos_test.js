@@ -47,7 +47,6 @@ contract("RealEstatePhotos", async function (accounts) {
         await instance.registerRealEstatePhoto(realEstateId, cid1, description1);
         await instance.registerRealEstatePhoto(realEstateId, cid2, description2);
         let realEstatePhoto1 = await instance.getRealEstatePhotoOfIndex(realEstateId, 0);
-        console.log(realEstatePhoto1);
         let realEstatePhoto2 = await instance.getRealEstatePhotoOfIndex(realEstateId, 1);
         assert(realEstatePhoto1.cid === "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe1");
         assert(realEstatePhoto1.description === "Reconstruction1");
