@@ -1,0 +1,17 @@
+.customDatePickerWidth, 
+.customDatePickerWidth > div.react-datepicker-wrapper, 
+.customDatePickerWidth > div > div.react-datepicker__input-container
+.customDatePickerWidth > div > div.react-datepicker__input-container input {
+    height: '3vh';
+}
+.react-datepicker__input-container  {
+    width: inherit;
+}
+.react-datepicker__input-container input {
+    width: inherit;
+}
+.react-datepicker-wrapper {
+    width: -webkit-calc(100% - 2px);
+    width:    -moz-calc(100% - 2px);
+    width:         calc(100% - 2px);
+}

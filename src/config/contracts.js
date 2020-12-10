@@ -1,5 +1,5 @@
 export const REAL_ESTATE_REPOSITORY = {
-  ADDRESS: '0x8438d7Eeae23B4C40E37961E872b21f4063C8977',
+  ADDRESS: '0x64B0dF8CBDA97Af0D9E67d0679B4E5653f43b0BA',
   ABI: [
     {
       "inputs": [],
@@ -524,7 +524,7 @@ export const REAL_ESTATE_REPOSITORY = {
 }
 
 export const REAL_ESTATE_PHOTOS = {
-  ADDRESS: '0x5c8CEE735361E28d987Fc9e2F21E2C8CD19E08fA',
+  ADDRESS: '0x059c76B1bBa95B7b46c11cA977Adf0dc92C3eBe3',
   ABI: [
     {
       "anonymous": false,
@@ -680,6 +680,372 @@ export const REAL_ESTATE_PHOTOS = {
     {
       "inputs": [],
       "name": "destroy",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
+}
+
+export const REAL_ESTATE_SELLING_FACTORY = {
+  ADDRESS: '0x5c7A3BDec2B9FE55462a9C7EafAe1CfAf6fE31A3',
+  ABI: [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_realEstateRepository",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "contractId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "realEstateId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "seller",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "buyer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "dueDate",
+          "type": "uint256"
+        }
+      ],
+      "name": "RealEstateSellingRegistration",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "realEstateId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "buyer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "dueDate",
+          "type": "uint256"
+        }
+      ],
+      "name": "registerSellingContract",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "realEstateId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getNrOfSellingContractsByTokenId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "realEstateId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSellingContractByRealEstateIdAndIndex",
+      "outputs": [
+        {
+          "internalType": "contract RealEstateSelling",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [],
+      "name": "destroy",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
+}
+
+export const REAL_ESTATE_SELLING = {
+  ABI: [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_contractId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_realEstateId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_seller",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_buyer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_price",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_dueDate",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "contractId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "realEstateId",
+          "type": "uint256"
+        }
+      ],
+      "name": "SellingContractCompletion",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "contractId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "realEstateId",
+          "type": "uint256"
+        }
+      ],
+      "name": "SellingContractConfirmation",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "contractId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "realEstateId",
+          "type": "uint256"
+        }
+      ],
+      "name": "SellingContractWithdraw",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "getSellingContract",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "_contractId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_realEstateId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_seller",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_buyer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_price",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_dueDate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_paid",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum RealEstateSelling.STATE",
+          "name": "_state",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "confirm",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "registerRecievedPayment",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "withdraw",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

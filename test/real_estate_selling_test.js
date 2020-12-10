@@ -96,19 +96,14 @@ contract("RealEstateSelling", async function (accounts) {
             dueDate
         );
         let sellingContractAddress = await instance.getSellingContractByRealEstateIdAndIndex(realEstateId, index);
-        let sellingContract = await RealEstateSelling.at(sellingContractAddress);
-        let contractIdFromContract = await sellingContract.contractId();
-        assert(contractIdFromContract.toNumber() === 1);
-        let sellerFromContract = await sellingContract.seller();
-        assert(sellerFromContract === accounts[0]);
-        let buyerFromContract = await sellingContract.buyer();
-        assert(buyerFromContract === accounts[1]);
-        let priceFromContract = await sellingContract.price();
-        assert(priceFromContract.toNumber() === price);
-        let dueDateContract = await sellingContract.dueDate();
-        assert(dueDateContract.toNumber() === dueDate);
-        let stateContract = await sellingContract.state();
-        assert(stateContract.toNumber() === 0);
+        let sellingContractInstance = await RealEstateSelling.at(sellingContractAddress);
+        let sellingContract = await sellingContractInstance.getSellingContract();
+        assert(sellingContract._contractId.toNumber() === 1);
+        assert(sellingContract._seller === accounts[0]);
+        assert(sellingContract._buyer === accounts[1]);
+        assert(sellingContract._price.toNumber() === price);
+        assert(sellingContract._dueDate.toNumber() === dueDate);
+        assert(sellingContract._state.toNumber() === 0);
     });
 
     it("should confirm the real estate selling contract", async function () {
@@ -189,10 +184,9 @@ contract("RealEstateSelling", async function (accounts) {
             return e.contractId.toNumber() === 1
                 && e.realEstateId.toNumber() === realEstateId;
         }, 'event params incorrect');
-        let paidFromContract = await sellingContract.paid();
-        let stateFromContract = await sellingContract.state();
-        assert(paidFromContract.toNumber() == price);
-        assert(stateFromContract.toNumber() == 2);
+        let sellingContractData = await sellingContract.getSellingContract();
+        assert(sellingContractData._paid.toNumber() == price);
+        assert(sellingContractData._state.toNumber() == 2);
     });
 
     it("should withdraw the registered selling contract", async function () {
@@ -221,7 +215,7 @@ contract("RealEstateSelling", async function (accounts) {
             return e.contractId.toNumber() === 1
                 && e.realEstateId.toNumber() === realEstateId;
         }, 'event params incorrect');
-        let stateFromContract = await sellingContract.state();
-        assert(stateFromContract.toNumber() == 3);
+        let sellingContractData = await sellingContract.getSellingContract();
+        assert(sellingContractData._state.toNumber() == 3);
     });
 });

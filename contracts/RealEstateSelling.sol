@@ -3,14 +3,14 @@ pragma solidity ^0.6.2;
 contract RealEstateSelling {
     enum STATE {REGISTERED, CONFIRMED, SUCCESSFULL, WITHDRAWN}
 
-    uint256 public contractId;
-    uint256 public realEstateId;
-    address public seller;
-    address public buyer;
-    uint256 public price;
-    uint256 public dueDate;
-    uint256 public paid;
-    STATE public state;
+    uint256 contractId;
+    uint256 realEstateId;
+    address seller;
+    address buyer;
+    uint256 price;
+    uint256 dueDate;
+    uint256 paid;
+    STATE state;
 
     event SellingContractConfirmation(uint256 contractId, uint256 realEstateId);
 
@@ -33,6 +33,32 @@ contract RealEstateSelling {
         price = _price;
         dueDate = _dueDate;
         state = STATE.REGISTERED;
+    }
+
+    function getSellingContract()
+        public
+        view
+        returns (
+            uint256 _contractId,
+            uint256 _realEstateId,
+            address _seller,
+            address _buyer,
+            uint256 _price,
+            uint256 _dueDate,
+            uint256 _paid,
+            STATE _state
+        )
+    {
+        return (
+            contractId,
+            realEstateId,
+            seller,
+            buyer,
+            price,
+            dueDate,
+            paid,
+            state
+        );
     }
 
     function confirm() public {
