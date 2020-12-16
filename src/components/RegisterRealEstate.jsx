@@ -37,7 +37,6 @@ function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
         event.preventDefault();
 
         const realEstate = {
-            proprietor: proprietor,
             externalId: externalId,
             type: type,
             country: country,
@@ -56,10 +55,7 @@ function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
             gas: GAS_LIMIT,
             from: accounts[0]
         }
-        await realEstateRepositoryContract.methods.registerRealEstate(proprietor, file.path).send(config)
-            .once('receipt', (receipt) => {
-                console.log(receipt);
-            })
+        await realEstateRepositoryContract.methods.registerRealEstate(proprietor, file.path).send(config);
 
         setProprietor('');
         setExternalId('');

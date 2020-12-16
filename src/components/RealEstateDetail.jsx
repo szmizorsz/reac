@@ -22,6 +22,8 @@ const RealEstateDetail = ({ match, ipfs }) => {
     const [buyer, setBuyer] = React.useState('');
     const [price, setPrice] = React.useState('');
     const [dueDate, setDueDate] = React.useState();
+    const [sellingContractRegistrationDisabled, setSellingContractRegistrationDisabled] = React.useState(false);
+    const [sellingContractRegistrationNotSellerAlert, setSellingContractRegistrationNotSellerAlert] = React.useState(false);
 
     const web3 = new Web3(Web3.givenProvider);
     const realEstateRepositoryContract = new web3.eth.Contract(REAL_ESTATE_REPOSITORY.ABI, REAL_ESTATE_REPOSITORY.ADDRESS);
@@ -30,6 +32,7 @@ const RealEstateDetail = ({ match, ipfs }) => {
 
     const loadRealEstate = async () => {
         const tokenURI = await realEstateRepositoryContract.methods.tokenURI(tokenId).call();
+        const proprietor = await realEstateRepositoryContract.methods.ownerOf(tokenId).call();
         let realEstateFromIPFS;
         for await (const file of ipfs.get(tokenURI)) {
             const content = new BufferList()
@@ -39,6 +42,7 @@ const RealEstateDetail = ({ match, ipfs }) => {
             realEstateFromIPFS = JSON.parse(content.toString());
             realEstateFromIPFS.tokenURI = tokenURI;
             realEstateFromIPFS.tokenId = tokenId;
+            realEstateFromIPFS.proprietor = proprietor;
             setRealEstate(realEstateFromIPFS);
         }
     };
@@ -92,7 +96,11 @@ const RealEstateDetail = ({ match, ipfs }) => {
             const sellingContract = new web3.eth.Contract(REAL_ESTATE_SELLING.ABI, sellingContractAddress);
             const sellingContractData = await sellingContract.methods.getSellingContract().call();
             sellingContractData._state = sellingContractIntegerStateToString(parseInt(sellingContractData._state));
+            if (sellingContractData._state === 'Registered' || sellingContractData._state === 'Confirmed') {
+                setSellingContractRegistrationDisabled(true);
+            }
             sellingContractData._dueDate = new Date(parseInt(sellingContractData._dueDate)).toDateString();
+            sellingContractData.contract = sellingContract;
             realEstateSellingContractsFromChain.push(sellingContractData);
         }
         setRealEstateSellingContracts(realEstateSellingContractsFromChain);
@@ -106,6 +114,10 @@ const RealEstateDetail = ({ match, ipfs }) => {
         event.preventDefault();
 
         const accounts = await web3.eth.getAccounts();
+        if (accounts[0] !== realEstate.proprietor) {
+            setSellingContractRegistrationNotSellerAlert(true);
+            return;
+        }
         let config = {
             gas: GAS_LIMIT,
             from: accounts[0]
@@ -119,17 +131,7 @@ const RealEstateDetail = ({ match, ipfs }) => {
         setPrice('');
         setDueDate('');
 
-        const newRealEstateSellingContracts = [...realEstateSellingContracts];
-        newRealEstateSellingContracts.push({
-            _realEstateId: tokenId,
-            _state: 'Registered',
-            _seller: realEstate.proprietor,
-            _buyer: buyer,
-            _price: price,
-            _paid: 0,
-            _dueDate: new Date(parseInt(dueDate)).toDateString()
-        });
-        setRealEstateSellingContracts(newRealEstateSellingContracts);
+        loadRealEstateSellingContracts();
     }
 
     return (
@@ -144,7 +146,9 @@ const RealEstateDetail = ({ match, ipfs }) => {
                 setDescription={setDescription}
                 file={file}
                 setFile={setFile} />
-            <RealEstateSellingContracts realEstateSellingContracts={realEstateSellingContracts} />
+            <RealEstateSellingContracts
+                realEstateSellingContracts={realEstateSellingContracts}
+                loadRealEstateSellingContracts={loadRealEstateSellingContracts} />
             <RealEstateSellingContractRegistration
                 handleSubmit={handleSellingContractRegistration}
                 buyer={buyer}
@@ -152,7 +156,9 @@ const RealEstateDetail = ({ match, ipfs }) => {
                 price={price}
                 setPrice={setPrice}
                 dueDate={dueDate}
-                setDueDate={setDueDate} />
+                setDueDate={setDueDate}
+                disabled={sellingContractRegistrationDisabled}
+                nonSellerAlert={sellingContractRegistrationNotSellerAlert} />
         </>
     );
 };
