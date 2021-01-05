@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Switch,
   Route
 } from "react-router-dom";
@@ -12,9 +12,8 @@ import RegisterRealEstate from './components/RegisterRealEstate';
 import RealEstateDetail from './components/RealEstateDetail';
 import { REAL_ESTATE_REPOSITORY } from './config/contracts';
 import { IPFS } from './config/settings'
-import Web3 from 'web3';
 import ipfsClient from "ipfs-http-client";
-
+import getWeb3 from "./util/getWeb3";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,11 +27,9 @@ function App() {
   const [ipfs] = React.useState(ipfsClient({ host: IPFS.HOST, port: IPFS.PORT, protocol: IPFS.PROTOCOL }));
 
   const loadBlockChainConfig = async () => {
-    window.ethereum.enable().then(function (accounts) {
-      const web3 = new Web3(Web3.givenProvider);
-      const realEstateRepository = new web3.eth.Contract(REAL_ESTATE_REPOSITORY.ABI, REAL_ESTATE_REPOSITORY.ADDRESS);
-      setRealEstateRepositoryContract(realEstateRepository);
-    });
+    const web3 = await getWeb3();
+    const realEstateRepository = new web3.eth.Contract(REAL_ESTATE_REPOSITORY.ABI, REAL_ESTATE_REPOSITORY.ADDRESS);
+    setRealEstateRepositoryContract(realEstateRepository);
   };
 
   useEffect(() => {

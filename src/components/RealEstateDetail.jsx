@@ -69,9 +69,7 @@ const RealEstateDetail = ({ match, ipfs }) => {
 
         setDescription('');
         setFile('');
-        const newRealEstatePhotos = [...realEstatePhotos];
-        newRealEstatePhotos.push({ cid, description });
-        setRealEstatePhotos(newRealEstatePhotos);
+        loadRealEstatePhotos();
     }
 
     const loadRealEstatePhotos = async () => {
