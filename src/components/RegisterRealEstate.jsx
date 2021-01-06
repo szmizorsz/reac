@@ -162,7 +162,7 @@ function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
                     variant="contained"
                     color="primary"
                     type="submit">
-                    Register
+                    Register on ropsten
                 </Button>
             </form>
         </Box>
