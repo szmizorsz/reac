@@ -1,4 +1,4 @@
-pragma solidity ^0.6.2;
+pragma solidity >=0.4.22 <0.8.0;
 
 import "./RealEstateRepository.sol";
 import "./RealEstateSelling.sol";
@@ -38,14 +38,15 @@ contract RealEstateSellingFactory is Ownable {
         );
         _ids.increment();
         uint256 contractId = _ids.current();
-        RealEstateSelling sellingContract = new RealEstateSelling(
-            contractId,
-            realEstateId,
-            msg.sender,
-            buyer,
-            price,
-            dueDate
-        );
+        RealEstateSelling sellingContract =
+            new RealEstateSelling(
+                contractId,
+                realEstateId,
+                msg.sender,
+                buyer,
+                price,
+                dueDate
+            );
         sellingContractsByRealEstateId[realEstateId].push(sellingContract);
         emit RealEstateSellingRegistration(
             contractId,
