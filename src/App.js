@@ -10,6 +10,7 @@ import MenuBar from './components/MenuBar'
 import RealEstateList from './components/RealEstateList';
 import RegisterRealEstate from './components/RegisterRealEstate';
 import RealEstateDetail from './components/RealEstateDetail';
+import Mortgage from './components/Mortgage';
 import { REAL_ESTATE_REPOSITORY } from './config/contracts';
 import { IPFS } from './config/settings'
 import ipfsClient from "ipfs-http-client";
@@ -60,6 +61,9 @@ function App() {
                   <RealEstateDetail
                     ipfs={ipfs}
                   />
+                </Route>
+                <Route path="/mortgage">
+                  <Mortgage />
                 </Route>
               </Switch>
             </div>

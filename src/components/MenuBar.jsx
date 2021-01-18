@@ -48,6 +48,7 @@ function MenuBar() {
                 >
                     <MenuItem onClick={handleClose}><Link to="/register">Register</Link></MenuItem>
                     <MenuItem onClick={handleClose}><Link to="/list">List</Link></MenuItem>
+                    <MenuItem onClick={handleClose}><Link to="/mortgage">Mortgage</Link></MenuItem>
                 </Menu>
             </Toolbar>
         </AppBar>

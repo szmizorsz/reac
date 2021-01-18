@@ -116,6 +116,23 @@ contract MortgageLiquidityPool is Ownable {
         );
     }
 
+    function getProviderByIndex(uint256 index)
+        public
+        view
+        returns (
+            address _provider,
+            uint256 _capital,
+            uint256 _collectedInterest
+        )
+    {
+        address provider = liquidityProviders[index];
+        return (
+            provider,
+            balances[provider].capital,
+            balances[provider].collectedInterest
+        );
+    }
+
     function applyForMortgage(uint256 realEstateId, uint256 amount) public {
         require(
             msg.sender == realEstateRepository.ownerOf(realEstateId),

@@ -7,7 +7,7 @@ module.exports = async function (deployer) {
 	deployer.deploy(StringUtils);
 	deployer.link(StringUtils, [RealEstateRepository]);
 	deployer.deploy(RealEstateRepository).then(function () {
-		deployer.deploy(MortgageLiquidityPool, RealEstateRepository.address);
-		deployer.deploy(RealEstateSellingFactory, RealEstateRepository.address);
+		return deployer.deploy(MortgageLiquidityPool, RealEstateRepository.address);
+		return deployer.deploy(RealEstateSellingFactory, RealEstateRepository.address);
 	});
 };

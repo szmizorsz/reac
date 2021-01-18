@@ -39,6 +39,20 @@ contract("MortgageLiquidityPool", async function (accounts) {
         assert(providerBalance._collectedInterest.toNumber() == 0);
     });
 
+    it("should get liquidity provider by index", async function () {
+        let provider1 = accounts[1];
+        let amount1 = 10;
+        await instance.injectLiquidity({ from: provider1, value: amount1 });
+        let provider2 = accounts[2];
+        let amount2 = 20;
+        await instance.injectLiquidity({ from: provider2, value: amount2 });
+
+        let provider2Balance = await instance.getProviderByIndex(1);
+        assert(provider2Balance._provider == provider2);
+        assert(provider2Balance._capital.toNumber() == amount2);
+        assert(provider2Balance._collectedInterest.toNumber() == 0);
+    });
+
     it("should apply for mortgage", async function () {
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
