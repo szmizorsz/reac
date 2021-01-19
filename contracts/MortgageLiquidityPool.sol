@@ -19,14 +19,16 @@ contract MortgageLiquidityPool is Ownable {
     uint256 public interestRate;
     uint256 public lentCapital;
     uint256 public availableCapital;
-    address[] liquidityProviders;
 
+    address[] liquidityProviders;
     struct ProviderBalance {
         uint256 capital;
         uint256 collectedInterest;
     }
     mapping(address => ProviderBalance) balances;
+
     mapping(uint256 => Mortgage[]) mortgagesByRealEstateId;
+    Mortgage[] mortgages;
 
     event LiquidityInjection(address provider, uint256 amount);
     event LiquidityWithdrawal(
@@ -149,7 +151,12 @@ contract MortgageLiquidityPool is Ownable {
                 amount
             );
         mortgagesByRealEstateId[realEstateId].push(mortgage);
+        mortgages.push(mortgage);
         emit MortgageApplication(mortgageId, realEstateId, msg.sender, amount);
+    }
+
+    function getNrOfMortgages() public view returns (uint256) {
+        return mortgages.length;
     }
 
     function getNrOfMortgagesByRealEstateId(uint256 realEstateId)
@@ -158,6 +165,10 @@ contract MortgageLiquidityPool is Ownable {
         returns (uint256)
     {
         return mortgagesByRealEstateId[realEstateId].length;
+    }
+
+    function getMortgageByIndex(uint256 index) public view returns (Mortgage) {
+        return mortgages[index];
     }
 
     function getMortgageByRealEstateIdAndIndex(

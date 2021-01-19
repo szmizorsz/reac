@@ -1,18 +1,23 @@
 import React, { useEffect } from 'react'
-import { MORTGAGE_LIQUIDITY_POOL } from '../config/contracts';
+import { MORTGAGE_LIQUIDITY_POOL, MORTGAGE } from '../config/contracts';
 import Web3 from 'web3';
 import MortgageLiquidityProviders from './MortgageLiquidityProviders'
 import MortgageLiquidityInjectionDialog from './MortgageLiquidityInjectionDialog'
 import MortgageLiquidityWithdrawalDialog from './MortgageLiquidityWithdrawalDialog'
+import MortgageApplicationDialog from './MortgageApplicationDialog'
 import MortgageLiquidityPoolData from './MortgageLiquidityPoolData'
+import Mortgages from './Mortgages'
 import { Button } from '@material-ui/core/'
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
+import { mortgageIntegerStateToString } from '../util/dataConversions';
 
 const Mortgage = () => {
     const [liquidityProvders, setLiquidityProviders] = React.useState([]);
+    const [mortgages, setMortgages] = React.useState([]);
     const [mortgageLiquidityInjectionDialogOpen, setMortgageLiquidityInjectionDialogOpen] = React.useState(false);
     const [mortgageLiquidityWithdrawalDialogOpen, setMortgageLiquidityWithdrawalDialogOpen] = React.useState(false);
+    const [mortgageApplicationDialogOpen, setMortgageApplicationDialogOpen] = React.useState(false);
     const [capital, setCapital] = React.useState('');
     const [collectibleInterest, setCollectibleInterest] = React.useState('');
     const [collectedInterest, setCollectedInterest] = React.useState('');
@@ -49,9 +54,33 @@ const Mortgage = () => {
         setAvailableCapital(Web3.utils.fromWei(availableCapitalFromChain, 'ether'));
     };
 
+    const loadMortgages = async () => {
+        const mortgagesFromBlockchain = [];
+        const nrOfMortgages = await mortgageLiquidityPoolContract.methods.getNrOfMortgages().call();
+        for (let i = 0; i < nrOfMortgages; i++) {
+            const mortgageAddress = await mortgageLiquidityPoolContract.methods.getMortgageByIndex(i).call();
+            const mortgageContract = new web3.eth.Contract(MORTGAGE.ABI, mortgageAddress);
+            const mortgage = await mortgageContract.methods.getMortgage().call();
+            mortgage._requestedAmount = Web3.utils.fromWei(mortgage._requestedAmount, 'ether');
+            mortgage._borrowedAmount = Web3.utils.fromWei(mortgage._borrowedAmount, 'ether');
+            mortgage._interest = Web3.utils.fromWei(mortgage._interest, 'ether');
+            mortgage._repaidAmount = Web3.utils.fromWei(mortgage._repaidAmount, 'ether');
+            mortgage._state = mortgageIntegerStateToString(parseInt(mortgage._state));
+            if (parseInt(mortgage._dueDate) !== 0) {
+                mortgage._dueDate = new Date(parseInt(mortgage._dueDate)).toDateString();
+            } else {
+                mortgage._dueDate = 'Not set';
+            }
+            mortgage.contract = mortgageContract;
+            mortgagesFromBlockchain.push(mortgage);
+        }
+        setMortgages(mortgagesFromBlockchain);
+    };
+
     useEffect(() => {
         loadLiquidityPoolData();
         loadLiquidityProviers();
+        loadMortgages();
     }, []);
 
     const handleCloseMortgageLiquidityInjectionDialog = () => {
@@ -60,6 +89,10 @@ const Mortgage = () => {
 
     const handleCloseMortgageLiquidityWithdrawalDialog = () => {
         setMortgageLiquidityWithdrawalDialogOpen(false);
+    };
+
+    const handleCloseMortgageApplicationDialog = () => {
+        setMortgageApplicationDialogOpen(false);
     };
 
     return (
@@ -88,12 +121,22 @@ const Mortgage = () => {
                             color="primary"
                             type="submit">
                             Withdraw
-                    </Button>
+                        </Button>
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <Box m={1}>
-                        <MortgageLiquidityProviders liquidityProvders={liquidityProvders} />
+                        <Mortgages
+                            mortgages={mortgages}
+                            loadMortgages={loadMortgages}
+                            loadLiquidityPoolData={loadLiquidityPoolData} />
+                        <Button
+                            onClick={() => { setMortgageApplicationDialogOpen(true) }}
+                            variant="outlined"
+                            color="primary"
+                            type="submit">
+                            Apply for mortgage
+                        </Button>
                     </Box>
                 </Grid>
             </Grid>
@@ -108,6 +151,12 @@ const Mortgage = () => {
                 handleClose={handleCloseMortgageLiquidityWithdrawalDialog}
                 mortgageLiquidityPoolContract={mortgageLiquidityPoolContract}
                 loadLiquidityProviers={loadLiquidityProviers}
+                loadLiquidityPoolData={loadLiquidityPoolData} />
+            <MortgageApplicationDialog
+                open={mortgageApplicationDialogOpen}
+                handleClose={handleCloseMortgageApplicationDialog}
+                mortgageLiquidityPoolContract={mortgageLiquidityPoolContract}
+                loadMortgages={loadMortgages}
                 loadLiquidityPoolData={loadLiquidityPoolData} />
         </>
     );

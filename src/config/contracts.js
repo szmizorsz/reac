@@ -1,5 +1,5 @@
 export const REAL_ESTATE_REPOSITORY = {
-  ADDRESS: '0x64B0dF8CBDA97Af0D9E67d0679B4E5653f43b0BA',
+  ADDRESS: '0xf834495A60604CD8aFEB9063F9A4a099CFb49267',
   ABI: [
     {
       "inputs": [],
@@ -524,7 +524,7 @@ export const REAL_ESTATE_REPOSITORY = {
 }
 
 export const REAL_ESTATE_PHOTOS = {
-  ADDRESS: '0x059c76B1bBa95B7b46c11cA977Adf0dc92C3eBe3',
+  ADDRESS: '0xaEe44c047fA5084935a8e5cFF1C9B750A425dABb',
   ABI: [
     {
       "anonymous": false,
@@ -688,7 +688,7 @@ export const REAL_ESTATE_PHOTOS = {
 }
 
 export const REAL_ESTATE_SELLING_FACTORY = {
-  ADDRESS: '0x9C4Ef7C76525fde32dbE9255B013Aaee4DFB61ca',
+  ADDRESS: '0xeB0ab9F005346F05ac3D7aE45c07900e86d550c5',
   ABI: [
     {
       "inputs": [
@@ -1054,7 +1054,7 @@ export const REAL_ESTATE_SELLING = {
 }
 
 export const MORTGAGE_LIQUIDITY_POOL = {
-  ADDRESS: '0x5c7A3BDec2B9FE55462a9C7EafAe1CfAf6fE31A3',
+  ADDRESS: '0x75eBdACDA9660Ec33a91B982fb7f9dfF84867f55',
   ABI: [
     {
       "inputs": [
@@ -1401,6 +1401,20 @@ export const MORTGAGE_LIQUIDITY_POOL = {
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getNrOfMortgages",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -1414,6 +1428,26 @@ export const MORTGAGE_LIQUIDITY_POOL = {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function",
+      "constant": true
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getMortgageByIndex",
+      "outputs": [
+        {
+          "internalType": "contract Mortgage",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "view",

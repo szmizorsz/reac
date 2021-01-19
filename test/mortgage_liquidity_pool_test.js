@@ -87,6 +87,28 @@ contract("MortgageLiquidityPool", async function (accounts) {
         let realEstateId = 1;
         let amount = 200;
         await instance.applyForMortgage(realEstateId, amount);
+        let mortgageAddress = await instance.getMortgageByIndex(0);
+        let mortgageInstance = await Mortgage.at(mortgageAddress);
+        let mortgage = await mortgageInstance.getMortgage();
+        assert(mortgage._mortgageId.toNumber() === 1);
+        assert(mortgage._realEstateId.toNumber() === realEstateId);
+        assert(mortgage._realEstateOwner === proprietor);
+        assert(mortgage._requestedAmount.toNumber() === amount);
+        assert(mortgage._interestRate.toNumber() === 0);
+        assert(mortgage._borrowedAmount.toNumber() === 0);
+        assert(mortgage._interest.toNumber() === 0);
+        assert(mortgage._repaidAmount.toNumber() === 0);
+        assert(mortgage._state.toNumber() === 0);
+        assert(mortgage._dueDate.toNumber() === 0);
+    });
+
+    it("should get mortgage data by real estate", async function () {
+        let proprietor = accounts[0];
+        let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        let realEstateId = 1;
+        let amount = 200;
+        await instance.applyForMortgage(realEstateId, amount);
         let mortgageAddress = await instance.getMortgageByRealEstateIdAndIndex(realEstateId, 0);
         let mortgageInstance = await Mortgage.at(mortgageAddress);
         let mortgage = await mortgageInstance.getMortgage();
