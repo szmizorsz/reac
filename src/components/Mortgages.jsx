@@ -27,7 +27,7 @@ const useRowStyles = makeStyles({
     },
 });
 
-function Row({ row, loadMortgages, loadLiquidityPoolData }) {
+function Row({ row, loadMortgages, loadLiquidityPoolData, loadLiquidityProviers }) {
     const [open, setOpen] = React.useState(false);
     const classes = useRowStyles();
     const [mortgageApprovalDialogOpen, setMortgageApprovalDialogOpen] = React.useState(false);
@@ -118,10 +118,10 @@ function Row({ row, loadMortgages, loadLiquidityPoolData }) {
                 <TableCell component="th" scope="row">
                     <Link to={`/realestate/${row._realEstateId}`}>{row._realEstateId}</Link>
                 </TableCell>
-                <TableCell align="right">{row._borrowedAmount}</TableCell>
-                <TableCell align="right">{row._interest}</TableCell>
-                <TableCell align="right">{row._repaidAmount}</TableCell>
-                <TableCell align="right">{row._state}</TableCell>
+                <TableCell>{row._borrowedAmount}</TableCell>
+                <TableCell>{row._interest}</TableCell>
+                <TableCell>{row._total}</TableCell>
+                <TableCell>{row._state}</TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -139,6 +139,10 @@ function Row({ row, loadMortgages, loadLiquidityPoolData }) {
                                 <Grid md={2}></Grid>
                                 <Grid item xs={12} md={10}>
                                     <TextField InputProps={{ disableUnderline: true }} label="Requested amount (ETH)" value={row._requestedAmount || ''} fullWidth margin="dense" />
+                                </Grid>
+                                <Grid md={2}></Grid>
+                                <Grid item xs={12} md={10}>
+                                    <TextField InputProps={{ disableUnderline: true }} label="Repaid (ETH)" value={row._repaidAmount || ''} fullWidth margin="dense" />
                                 </Grid>
                                 <Grid md={2}></Grid>
                                 <Grid item xs={12} md={10}>
@@ -176,12 +180,13 @@ function Row({ row, loadMortgages, loadLiquidityPoolData }) {
                 handleClose={handleCloseMortgageRepaymentDialog}
                 mortgageContract={contractForDialog}
                 loadMortgages={loadMortgages}
-                loadLiquidityPoolData={loadLiquidityPoolData} />
+                loadLiquidityPoolData={loadLiquidityPoolData}
+                loadLiquidityProviers={loadLiquidityProviers} />
         </React.Fragment>
     );
 }
 
-export default function Mortgages({ mortgages, loadMortgages, loadLiquidityPoolData }) {
+export default function Mortgages({ mortgages, loadMortgages, loadLiquidityPoolData, loadLiquidityProviers }) {
     return (
         <TableContainer component={Paper}>
             <Table aria-label="collapsible table">
@@ -194,10 +199,10 @@ export default function Mortgages({ mortgages, loadMortgages, loadLiquidityPoolD
                     <TableRow>
                         <TableCell />
                         <TableCell>Real estate</TableCell>
-                        <TableCell align="right">Borrowed (ETH)</TableCell>
-                        <TableCell align="right">Interest (ETH)</TableCell>
-                        <TableCell align="right">Repaid (ETH)</TableCell>
-                        <TableCell align="right">State</TableCell>
+                        <TableCell>Borrowed (ETH)</TableCell>
+                        <TableCell>Interest (ETH)</TableCell>
+                        <TableCell>Total (ETH)</TableCell>
+                        <TableCell>State</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -206,7 +211,8 @@ export default function Mortgages({ mortgages, loadMortgages, loadLiquidityPoolD
                             key={row._mortgageId}
                             row={row}
                             loadMortgages={loadMortgages}
-                            loadLiquidityPoolData={loadLiquidityPoolData} />
+                            loadLiquidityPoolData={loadLiquidityPoolData}
+                            loadLiquidityProviers={loadLiquidityProviers} />
                     ))}
                 </TableBody>
             </Table>

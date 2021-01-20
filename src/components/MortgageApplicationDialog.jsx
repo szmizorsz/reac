@@ -33,7 +33,7 @@ function MortgageApplicationDialog({ open, handleClose, mortgageLiquidityPoolCon
                 <DialogTitle id="form-dialog-title">Mortgage application</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Please, specify the real esatet ID and amount (ETH)!
+                        Please, specify the real esate ID and the amount (ETH)!
                     </DialogContentText>
                     <TextField
                         autoFocus

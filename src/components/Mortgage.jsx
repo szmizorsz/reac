@@ -46,8 +46,9 @@ const Mortgage = () => {
         setCollectibleInterest(Web3.utils.fromWei(collectibleInterestFromChain, 'ether'));
         const collectedInterestFromChain = await mortgageLiquidityPoolContract.methods.collectedInterest().call();
         setCollectedInterest(Web3.utils.fromWei(collectedInterestFromChain, 'ether'));
-        const interestRateFromChain = await mortgageLiquidityPoolContract.methods.interestRate().call();
-        setInterestRate(Web3.utils.fromWei(interestRateFromChain, 'ether'));
+        let interestRateFromChain = await mortgageLiquidityPoolContract.methods.interestRate().call();
+        interestRateFromChain = interestRateFromChain / 10;
+        setInterestRate(interestRateFromChain.toString() + '%');
         const lentCapitalFromChain = await mortgageLiquidityPoolContract.methods.lentCapital().call();
         setLentCapital(Web3.utils.fromWei(lentCapitalFromChain, 'ether'));
         const availableCapitalFromChain = await mortgageLiquidityPoolContract.methods.availableCapital().call();
@@ -64,6 +65,9 @@ const Mortgage = () => {
             mortgage._requestedAmount = Web3.utils.fromWei(mortgage._requestedAmount, 'ether');
             mortgage._borrowedAmount = Web3.utils.fromWei(mortgage._borrowedAmount, 'ether');
             mortgage._interest = Web3.utils.fromWei(mortgage._interest, 'ether');
+            mortgage._total = parseFloat(mortgage._borrowedAmount) + parseFloat(mortgage._interest);
+            mortgage._interestRate = mortgage._interestRate / 10;
+            mortgage._interestRate = mortgage._interestRate.toString() + '%';
             mortgage._repaidAmount = Web3.utils.fromWei(mortgage._repaidAmount, 'ether');
             mortgage._state = mortgageIntegerStateToString(parseInt(mortgage._state));
             if (parseInt(mortgage._dueDate) !== 0) {
@@ -129,7 +133,8 @@ const Mortgage = () => {
                         <Mortgages
                             mortgages={mortgages}
                             loadMortgages={loadMortgages}
-                            loadLiquidityPoolData={loadLiquidityPoolData} />
+                            loadLiquidityPoolData={loadLiquidityPoolData}
+                            loadLiquidityProviers={loadLiquidityProviers} />
                         <Button
                             onClick={() => { setMortgageApplicationDialogOpen(true) }}
                             variant="outlined"

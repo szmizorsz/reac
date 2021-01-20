@@ -33,7 +33,7 @@ function MortgageLiquidityInjectionDialog({ open, handleClose, mortgageLiquidity
                 <DialogTitle id="form-dialog-title">Liquidity injection</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Please, specify the amount (ETH) the you would like to provide!
+                        Please, specify the amount (ETH) that you would like to provide!
                     </DialogContentText>
                     <TextField
                         autoFocus

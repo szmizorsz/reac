@@ -30,8 +30,8 @@ const MortgageLiquidityProviders = ({ liquidityProvders }) => {
                     <TableHead>
                         <TableRow>
                             <TableCell>Provider</TableCell>
-                            <TableCell>Capital</TableCell>
-                            <TableCell>Collected Interest</TableCell>
+                            <TableCell>Capital (ETH)</TableCell>
+                            <TableCell>Collected Interest(ETH)</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

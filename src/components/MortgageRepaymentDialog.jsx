@@ -9,7 +9,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { GAS_LIMIT } from '../config/settings'
 import Web3 from 'web3';
 
-function MortgageRepaymentDialog({ open, handleClose, mortgageContract, loadMortgages, loadLiquidityPoolData }) {
+function MortgageRepaymentDialog({ open, handleClose, mortgageContract, loadMortgages, loadLiquidityPoolData, loadLiquidityProviers }) {
     const web3 = new Web3(Web3.givenProvider);
     const [amount, setAmount] = React.useState('');
 
@@ -25,6 +25,7 @@ function MortgageRepaymentDialog({ open, handleClose, mortgageContract, loadMort
         handleClose();
         loadMortgages();
         loadLiquidityPoolData();
+        loadLiquidityProviers();
     }
 
     return (
