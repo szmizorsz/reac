@@ -15,7 +15,7 @@ const RealEstateBaseData = ({ realEstate }) => {
     const classes = useStyles();
 
     return (
-        <Box m={2}>
+        <Box mt={2}>
             <Grid container className={classes.root}>
                 <Grid item xs={12} md={2}>
                     <TextField label="Token Id" value={realEstate.tokenId || ''} fullWidth margin="dense" />

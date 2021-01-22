@@ -32,7 +32,7 @@ function MortgageLiquidityWithdrawalDialog({ open, handleClose, mortgageLiquidit
                 <DialogTitle id="form-dialog-title">Liquidity withdrawal</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Please, specify the amount (ETH) that you would like to withdraw!
+                        Please, specify the amount (ETH) that you would like to withdraw! The withdrawal decreses the collected interest first and than the capital.
                     </DialogContentText>
                     <TextField
                         autoFocus

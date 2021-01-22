@@ -1,18 +1,12 @@
 import React from 'react';
 import { TextField, Button, Box } from '@material-ui/core/';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./RealEstateSellingContractRegistration.css";
 import Alert from '@material-ui/lab/Alert';
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        '& > *': {
-            margin: theme.spacing(1)
-        },
-    },
+const useStyles = makeStyles(() => ({
     datepicker: {
         height: '3vh'
     },
@@ -38,15 +32,9 @@ const RealEstateSellingContractRegistration = ({ handleSubmit, buyer, setBuyer, 
     }
 
     return (
-        <Box m={2}>
+        <>
             <form className={classes.root} noValidate autoComplete="off" onSubmit={handleSubmit}>
-                <Typography variant="h6" gutterBottom>
-                    Selling contract registration
-                </Typography>
-                {disabledRegistrationAlert()}
-                {displayNonSellerAlert()}
                 <TextField
-                    variant="outlined"
                     fullWidth
                     required
                     id="Buyer"
@@ -55,7 +43,6 @@ const RealEstateSellingContractRegistration = ({ handleSubmit, buyer, setBuyer, 
                     label="Buyer"
                     margin="dense" />
                 <TextField
-                    variant="outlined"
                     fullWidth
                     required
                     id="Price (ETH)"
@@ -64,21 +51,29 @@ const RealEstateSellingContractRegistration = ({ handleSubmit, buyer, setBuyer, 
                     type="number"
                     label="Price"
                     margin="dense" />
-                <DatePicker
-                    className={classes.datepicker}
-                    selected={dueDate}
-                    onChange={date => setDueDate(date.getTime())}
-                    placeholderText="   Due Date *" />
-                <Button
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                    disabled={disabled}>
-                    Register
-                </Button>
+                <Box mt={2}>
+                    <DatePicker
+                        className={classes.datepicker}
+                        variant="inline"
+                        inputVariant="outlined"
+                        selected={dueDate}
+                        onChange={date => setDueDate(date.getTime())}
+                        placeholderText="   Due Date *" />
+                </Box>
+                <Box mt={2}>
+                    <Button
+                        fullWidth
+                        variant="outlined"
+                        color="primary"
+                        type="submit"
+                        disabled={disabled}>
+                        Register
+                    </Button>
+                </Box>
+                {disabledRegistrationAlert()}
+                {displayNonSellerAlert()}
             </form>
-        </Box>
+        </>
     );
 };
 

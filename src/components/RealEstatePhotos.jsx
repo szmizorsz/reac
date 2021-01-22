@@ -34,7 +34,7 @@ const RealEstatePhotos = ({ realEstatePhotos }) => {
 
     return (
         <Box m={3} className={classes.root}>
-            <GridList className={classes.gridList} cols={3.5}>
+            <GridList className={classes.gridList} cols={2.5}>
                 {realEstatePhotos.map((row) => (
                     <GridListTile key={row.cid + row.description}>
                         <a href={IPFS.PUBLIC_GATEWAY + row.cid}>
