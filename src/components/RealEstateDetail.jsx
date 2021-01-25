@@ -57,6 +57,7 @@ const RealEstateDetail = ({ match, ipfs }) => {
     const [dueDate, setDueDate] = React.useState();
     const [sellingContractRegistrationDisabled, setSellingContractRegistrationDisabled] = React.useState(false);
     const [sellingContractRegistrationNotSellerAlert, setSellingContractRegistrationNotSellerAlert] = React.useState(false);
+    const [sellingContractRegistrationRequiredFieldsAlert, setSellingContractRegistrationRequiredFieldsAlert] = React.useState(false);
 
     const web3 = new Web3(Web3.givenProvider);
     const realEstateRepositoryContract = new web3.eth.Contract(REAL_ESTATE_REPOSITORY.ABI, REAL_ESTATE_REPOSITORY.ADDRESS);
@@ -131,11 +132,14 @@ const RealEstateDetail = ({ match, ipfs }) => {
             if (sellingContractData._state === 'Registered' || sellingContractData._state === 'Confirmed') {
                 setSellingContractRegistrationDisabled(true);
             }
+            sellingContractData._price = Web3.utils.fromWei(sellingContractData._price, 'ether');
+            sellingContractData._paid = Web3.utils.fromWei(sellingContractData._paid, 'ether');
             sellingContractData._dueDate = new Date(parseInt(sellingContractData._dueDate)).toDateString();
             sellingContractData.contract = sellingContract;
             realEstateSellingContractsFromChain.push(sellingContractData);
         }
         setRealEstateSellingContracts(realEstateSellingContractsFromChain);
+        setSellingContractRegistrationRequiredFieldsAlert(false);
     };
 
     useEffect(() => {
@@ -151,11 +155,17 @@ const RealEstateDetail = ({ match, ipfs }) => {
             setSellingContractRegistrationNotSellerAlert(true);
             return;
         }
+        if (!buyer || !price || !dueDate) {
+            setSellingContractRegistrationRequiredFieldsAlert(true);
+            return;
+        }
+
         let config = {
             gas: GAS_LIMIT,
             from: accounts[0]
         }
-        await realEstateSellingFactoryContract.methods.registerSellingContract(tokenId, buyer, price, dueDate).send(config)
+        const weiPrice = Web3.utils.toWei(price.toString(), 'ether');
+        await realEstateSellingFactoryContract.methods.registerSellingContract(tokenId, buyer, weiPrice, dueDate).send(config)
             .once('receipt', (receipt) => {
                 console.log(receipt);
             })
@@ -243,7 +253,8 @@ const RealEstateDetail = ({ match, ipfs }) => {
                     <Grid container>
                         <RealEstateSellingContracts
                             realEstateSellingContracts={realEstateSellingContracts}
-                            loadRealEstateSellingContracts={loadRealEstateSellingContracts} />
+                            loadRealEstateSellingContracts={loadRealEstateSellingContracts}
+                            setSellingContractRegistrationDisabled={setSellingContractRegistrationDisabled} />
                         <Grid item md={2}></Grid>
                         <Grid item md={8}>
                             <RealEstateSellingContractRegistration
@@ -255,7 +266,8 @@ const RealEstateDetail = ({ match, ipfs }) => {
                                 dueDate={dueDate}
                                 setDueDate={setDueDate}
                                 disabled={sellingContractRegistrationDisabled}
-                                nonSellerAlert={sellingContractRegistrationNotSellerAlert} />
+                                nonSellerAlert={sellingContractRegistrationNotSellerAlert}
+                                requiredFieldsAlert={sellingContractRegistrationRequiredFieldsAlert} />
                         </Grid>
                         <Grid item md={2}></Grid>
                     </Grid>

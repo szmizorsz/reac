@@ -12,7 +12,18 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const RealEstateSellingContractRegistration = ({ handleSubmit, buyer, setBuyer, price, setPrice, dueDate, setDueDate, disabled, nonSellerAlert }) => {
+const RealEstateSellingContractRegistration = ({
+    handleSubmit,
+    buyer,
+    setBuyer,
+    price,
+    setPrice,
+    dueDate,
+    setDueDate,
+    disabled,
+    nonSellerAlert,
+    requiredFieldsAlert,
+}) => {
     const classes = useStyles();
 
     const disabledRegistrationAlert = () => {
@@ -27,6 +38,14 @@ const RealEstateSellingContractRegistration = ({ handleSubmit, buyer, setBuyer, 
         let alert;
         if (nonSellerAlert) {
             alert = <Alert severity="info">Only the proprietor can register a selling contract!</Alert>
+        }
+        return alert;
+    }
+
+    const displayMandatoryFieldsAlert = () => {
+        let alert;
+        if (requiredFieldsAlert) {
+            alert = <Alert severity="info">Please, fill in the required fields: buyer, price, due date!</Alert>
         }
         return alert;
     }
@@ -47,7 +66,7 @@ const RealEstateSellingContractRegistration = ({ handleSubmit, buyer, setBuyer, 
                     required
                     id="Price (ETH)"
                     value={price}
-                    onInput={e => setPrice(parseInt(e.target.value))}
+                    onInput={e => setPrice(e.target.value)}
                     type="number"
                     label="Price"
                     margin="dense" />
@@ -72,6 +91,7 @@ const RealEstateSellingContractRegistration = ({ handleSubmit, buyer, setBuyer, 
                 </Box>
                 {disabledRegistrationAlert()}
                 {displayNonSellerAlert()}
+                {displayMandatoryFieldsAlert()}
             </form>
         </>
     );

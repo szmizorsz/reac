@@ -23,7 +23,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function RealEstateSellingContracts({ realEstateSellingContracts, loadRealEstateSellingContracts }) {
+function RealEstateSellingContracts({
+    realEstateSellingContracts,
+    loadRealEstateSellingContracts,
+    setSellingContractRegistrationDisabled
+}) {
     const classes = useStyles();
 
     const [paymentSimulationDialogOpen, setPaymentSimulationDialogOpen] = React.useState(false);
@@ -153,7 +157,8 @@ function RealEstateSellingContracts({ realEstateSellingContracts, loadRealEstate
                 open={withdrawalDialogOpen}
                 handleClose={handleCloseWithdrawalDialog}
                 contract={contractForDialog}
-                loadRealEstateSellingContracts={loadRealEstateSellingContracts} />
+                loadRealEstateSellingContracts={loadRealEstateSellingContracts}
+                setSellingContractRegistrationDisabled={setSellingContractRegistrationDisabled} />
             <SellingContractConfirmationDialog
                 open={confirmationDialogOpen}
                 handleClose={handleCloseConfirmationDialog}

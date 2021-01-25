@@ -28,7 +28,8 @@ function PaymentSimulationDialog({ open, handleClose, contract, handleOpenTokenT
             gas: GAS_LIMIT,
             from: accounts[0]
         }
-        await contract.methods.registerRecievedPayment(paid).send(config)
+        const weiPaid = Web3.utils.toWei(paid.toString(), 'ether');
+        await contract.methods.registerRecievedPayment(weiPaid).send(config)
             .on('error', error => {
                 setDialogContentText(<Alert severity="error">Transaction has reverted: Please, note that only the seller can register the payment receivement!</Alert>)
             });
@@ -59,7 +60,7 @@ function PaymentSimulationDialog({ open, handleClose, contract, handleOpenTokenT
                         id="paid"
                         label="Paid (ETH)"
                         value={paid}
-                        onInput={e => setPaid(parseInt(e.target.value))}
+                        onInput={e => setPaid(e.target.value)}
                         type="number"
                         fullWidth
                     />

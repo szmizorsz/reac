@@ -9,7 +9,13 @@ import { GAS_LIMIT } from '../config/settings'
 import Web3 from 'web3';
 import Alert from '@material-ui/lab/Alert';
 
-function SellingContractWithdrawalDialog({ open, handleClose, contract, loadRealEstateSellingContracts }) {
+function SellingContractWithdrawalDialog({
+    open,
+    handleClose,
+    contract,
+    loadRealEstateSellingContracts,
+    setSellingContractRegistrationDisabled
+}) {
     const web3 = new Web3(Web3.givenProvider);
     const defaultDialogContentText = 'Seller can withdraw (cancel) the selling contract while it is in Registered or Confirmed state with no payment recieved.';
     const [dialogContentText, setDialogContentText] = React.useState(defaultDialogContentText);
@@ -32,6 +38,7 @@ function SellingContractWithdrawalDialog({ open, handleClose, contract, loadReal
 
         handleCloseWithDialogContentTextReset();
         loadRealEstateSellingContracts();
+        setSellingContractRegistrationDisabled(false);
     }
 
     const handleCloseWithDialogContentTextReset = () => {
