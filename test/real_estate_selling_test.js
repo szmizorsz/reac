@@ -176,17 +176,20 @@ contract("RealEstateSelling", async function (accounts) {
         );
         let index = 0;
         let sellingContractAddress = await instance.getSellingContractByRealEstateIdAndIndex(realEstateId, index);
+        await realEstateRepositoryInstance.approve(sellingContractAddress, realEstateId, { from: seller });
         let sellingContract = await RealEstateSelling.at(sellingContractAddress);
         await sellingContract.confirm({ from: buyer });
-        let result = await sellingContract.registerRecievedPayment(price, { from: seller });
+        let result = await sellingContract.pay({ from: buyer, value: price });
         truffleAssert.eventEmitted(result, 'SellingContractCompletion');
         truffleAssert.eventEmitted(result, 'SellingContractCompletion', (e) => {
             return e.contractId.toNumber() === 1
                 && e.realEstateId.toNumber() === realEstateId;
         }, 'event params incorrect');
         let sellingContractData = await sellingContract.getSellingContract();
-        assert(sellingContractData._paid.toNumber() == price);
-        assert(sellingContractData._state.toNumber() == 2);
+        assert(sellingContractData._paid.toNumber() === price);
+        assert(sellingContractData._state.toNumber() === 2);
+        let newOwner = await realEstateRepositoryInstance.ownerOf(realEstateId);
+        assert(newOwner === buyer);
     });
 
     it("should withdraw the registered selling contract", async function () {

@@ -12,10 +12,9 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PaymentIcon from '@material-ui/icons/Payment';
 import Tooltip from '@material-ui/core/Tooltip';
-import PaymentSimulationDialog from './PaymentSimulationDialog'
+import SellingContractPaymentDialog from './SellingContractPaymentDialog'
 import SellingContractWithdrawalDialog from './SellingContractWithdrawalDialog'
 import SellingContractConfirmationDialog from './SellingContractConfirmationDialog'
-import TokenTransferDialog from './TokenTransferDialog'
 
 const useStyles = makeStyles((theme) => ({
     table: {
@@ -25,34 +24,27 @@ const useStyles = makeStyles((theme) => ({
 
 function RealEstateSellingContracts({
     realEstateSellingContracts,
+    loadRealEstate,
     loadRealEstateSellingContracts,
     setSellingContractRegistrationDisabled
 }) {
     const classes = useStyles();
 
-    const [paymentSimulationDialogOpen, setPaymentSimulationDialogOpen] = React.useState(false);
-    const [tokenTransferDialogOpen, setTokenTransferDialogOpen] = React.useState(false);
+    const [paymentDialogOpen, setPaymentDialogOpen] = React.useState(false);
     const [withdrawalDialogOpen, setWithdrawalDialogOpen] = React.useState(false);
     const [confirmationDialogOpen, setConfirmationDialogOpen] = React.useState(false);
     const [contractForDialog, setContractForDialog] = React.useState('');
 
-    const handleOpenPaymentSimulationDialog = (contract) => {
-        setPaymentSimulationDialogOpen(true);
+    const handleOpenPaymentDialog = (contract) => {
+        setPaymentDialogOpen(true);
         setContractForDialog(contract);
     };
 
-    const handleClosePaymentSimulationDialog = () => {
-        setPaymentSimulationDialogOpen(false);
+    const handleClosePaymentDialog = () => {
+        setPaymentDialogOpen(false);
     };
 
-    const handleOpenTokenTransferDialog = (contract) => {
-        setTokenTransferDialogOpen(true);
-        setContractForDialog(contract);
-    };
 
-    const handleCloseTokenTransferDialog = () => {
-        setTokenTransferDialogOpen(false);
-    };
     const handleOpenWithdrawalDialog = (contract) => {
         setWithdrawalDialogOpen(true);
         setContractForDialog(contract);
@@ -95,16 +87,16 @@ function RealEstateSellingContracts({
         return withdrawIcon;
     }
 
-    const paymentSimulationIconDisplay = (row) => {
-        let paymentSimulationIcon;
+    const paymentIconDisplay = (row) => {
+        let paymentIcon;
         if (row._state === 'Confirmed') {
-            paymentSimulationIcon = <Tooltip title="Receive payment">
-                <IconButton aria-label="payment" onClick={() => handleOpenPaymentSimulationDialog(row.contract)}>
+            paymentIcon = <Tooltip title="Payment">
+                <IconButton aria-label="payment" onClick={() => handleOpenPaymentDialog(row.contract)}>
                     <PaymentIcon />
                 </IconButton>
             </Tooltip>;
         }
-        return paymentSimulationIcon;
+        return paymentIcon;
     }
 
     const tableDisplay = () => {
@@ -124,11 +116,11 @@ function RealEstateSellingContracts({
                     </TableHead>
                     <TableBody>
                         {realEstateSellingContracts.map((row) => (
-                            <TableRow key={row._dueDate}>
+                            <TableRow key={row._contractId}>
                                 <TableCell>
                                     {confirmationIconDisplay(row)}
                                     {withdrawalIconDisplay(row)}
-                                    {paymentSimulationIconDisplay(row)}
+                                    {paymentIconDisplay(row)}
                                 </TableCell>
                                 <TableCell>{row._state}</TableCell>
                                 <TableCell>{"Seller: " + row._seller}<br />{"Buyer: " + row._buyer}</TableCell>
@@ -147,11 +139,11 @@ function RealEstateSellingContracts({
     return (
         <>
             {tableDisplay()}
-            <PaymentSimulationDialog
-                open={paymentSimulationDialogOpen}
-                handleClose={handleClosePaymentSimulationDialog}
+            <SellingContractPaymentDialog
+                open={paymentDialogOpen}
+                handleClose={handleClosePaymentDialog}
                 contract={contractForDialog}
-                handleOpenTokenTransferDialog={handleOpenTokenTransferDialog}
+                loadRealEstate={loadRealEstate}
                 loadRealEstateSellingContracts={loadRealEstateSellingContracts} />
             <SellingContractWithdrawalDialog
                 open={withdrawalDialogOpen}
@@ -162,11 +154,6 @@ function RealEstateSellingContracts({
             <SellingContractConfirmationDialog
                 open={confirmationDialogOpen}
                 handleClose={handleCloseConfirmationDialog}
-                contract={contractForDialog}
-                loadRealEstateSellingContracts={loadRealEstateSellingContracts} />
-            <TokenTransferDialog
-                open={tokenTransferDialogOpen}
-                handleClose={handleCloseTokenTransferDialog}
                 contract={contractForDialog}
                 loadRealEstateSellingContracts={loadRealEstateSellingContracts} />
         </>

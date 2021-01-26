@@ -1,5 +1,5 @@
 export const REAL_ESTATE_REPOSITORY = {
-  ADDRESS: '0xff2a78a4dB25A0Aab6a89Ab83238f3122EC69Abe',
+  ADDRESS: '0x6d265b3F8A05d9fdcdb7819E757C0df2c0E767d2',
   ABI: [
     {
       "inputs": [],
@@ -524,7 +524,7 @@ export const REAL_ESTATE_REPOSITORY = {
 }
 
 export const REAL_ESTATE_PHOTOS = {
-  ADDRESS: '0x8049957Cc690201CfA1094e59521151c70E19170',
+  ADDRESS: '0xc78f592d725a3056dA11C46351E09f36e8349BC8',
   ABI: [
     {
       "anonymous": false,
@@ -688,7 +688,7 @@ export const REAL_ESTATE_PHOTOS = {
 }
 
 export const REAL_ESTATE_SELLING_FACTORY = {
-  ADDRESS: '0x796b9BAD3c69e200100704B84CA90702dB505B4C',
+  ADDRESS: '0x8f449D329c735Da2aFf8f0c6E02495AA5016FF48',
   ABI: [
     {
       "inputs": [
@@ -895,7 +895,7 @@ export const REAL_ESTATE_SELLING = {
           "type": "uint256"
         },
         {
-          "internalType": "address",
+          "internalType": "address payable",
           "name": "_seller",
           "type": "address"
         },
@@ -913,6 +913,11 @@ export const REAL_ESTATE_SELLING = {
           "internalType": "uint256",
           "name": "_dueDate",
           "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_realEstateRepository",
+          "type": "address"
         }
       ],
       "stateMutability": "nonpayable",
@@ -1031,16 +1036,10 @@ export const REAL_ESTATE_SELLING = {
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "registerRecievedPayment",
+      "inputs": [],
+      "name": "pay",
       "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "payable",
       "type": "function"
     },
     {
@@ -1054,7 +1053,7 @@ export const REAL_ESTATE_SELLING = {
 }
 
 export const MORTGAGE_LIQUIDITY_POOL = {
-  ADDRESS: '0xae786E222E0Cdc1d9c4362068E32A92698329B27',
+  ADDRESS: '0x72b5A0b8D2bc61c52B467E85d476CfA91f8e9544',
   ABI: [
     {
       "inputs": [

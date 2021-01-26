@@ -10,46 +10,52 @@ import { GAS_LIMIT } from '../config/settings'
 import Web3 from 'web3';
 import Alert from '@material-ui/lab/Alert';
 
-function PaymentSimulationDialog({ open, handleClose, contract, handleOpenTokenTransferDialog, loadRealEstateSellingContracts }) {
+function SellingContractPaymentDialog({ open, handleClose, contract, loadRealEstate, loadRealEstateSellingContracts }) {
     const web3 = new Web3(Web3.givenProvider);
-    const defaultDialogContentText = 'Seller can simulate that she/he received payment from the buyer and register it here. This simulation could be automated in the future with an oracle monitoring the payments from the buyer to the seller.';
+    const defaultDialogContentText = 'Buyer can pay the price that is transferred to the seller. Once the full price is paid the real estate ownership is transferred to the buyer.';
     const [dialogContentText, setDialogContentText] = React.useState(defaultDialogContentText);
 
     const [paid, setPaid] = React.useState('');
 
-    const handlePaymentSimulation = async (contract) => {
+    const handlePayment = async (contract) => {
         const accounts = await web3.eth.getAccounts();
         const sellingContractData = await contract.methods.getSellingContract().call();
-        if (accounts[0] !== sellingContractData._seller) {
-            setDialogContentText(<Alert severity="info">Only the seller can register the payment receivement!</Alert>);
+        if (accounts[0] !== sellingContractData._buyer) {
+            setDialogContentText(<Alert severity="info">Only the buyer can pay the contract!</Alert>);
             return;
         }
-        let config = {
-            gas: GAS_LIMIT,
-            from: accounts[0]
+        console.log(parseFloat(Web3.utils.fromWei(sellingContractData._paid, 'ether')));
+        console.log(parseFloat(paid));
+        console.log(parseFloat(Web3.utils.fromWei(sellingContractData._paid, 'ether')) + parseFloat(paid));
+        console.log(parseFloat(Web3.utils.fromWei(sellingContractData._price, 'ether')));
+        if (parseFloat(Web3.utils.fromWei(sellingContractData._paid, 'ether')) + parseFloat(paid) > parseFloat(Web3.utils.fromWei(sellingContractData._price, 'ether'))) {
+            setDialogContentText(<Alert severity="info">You can not overpay the contract!</Alert>);
+            return;
         }
         const weiPaid = Web3.utils.toWei(paid.toString(), 'ether');
-        await contract.methods.registerRecievedPayment(weiPaid).send(config)
+        let config = {
+            gas: GAS_LIMIT,
+            from: accounts[0],
+            value: weiPaid
+        }
+        await contract.methods.pay().send(config)
             .on('error', error => {
-                setDialogContentText(<Alert severity="error">Transaction has reverted: Please, note that only the seller can register the payment receivement!</Alert>)
+                setDialogContentText(<Alert severity="error">Transaction has reverted: Please, note that only the buyer can pay the contract!</Alert>)
             });
-        handleCloseWithDialogContentTextResetAndOpenTokenTransferDialog();
+        handleCloseWithDialogContentTextReset();
         loadRealEstateSellingContracts();
+        loadRealEstate();
     }
 
-    const handleCloseWithDialogContentTextResetAndOpenTokenTransferDialog = async () => {
+    const handleCloseWithDialogContentTextReset = async () => {
         setDialogContentText(defaultDialogContentText);
         handleClose();
-        const sellingContractData = await contract.methods.getSellingContract().call();
-        if (parseInt(sellingContractData._paid) >= parseInt(sellingContractData._price)) {
-            handleOpenTokenTransferDialog(contract);
-        }
     }
 
     return (
         <div>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" disableBackdropClick>
-                <DialogTitle id="form-dialog-title">Payment simulation</DialogTitle>
+                <DialogTitle id="form-dialog-title">Payment</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         {dialogContentText}
@@ -66,11 +72,11 @@ function PaymentSimulationDialog({ open, handleClose, contract, handleOpenTokenT
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseWithDialogContentTextResetAndOpenTokenTransferDialog} color="primary">
+                    <Button onClick={handleCloseWithDialogContentTextReset} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={() => { handlePaymentSimulation(contract) }} color="primary">
-                        Save
+                    <Button onClick={() => { handlePayment(contract) }} color="primary">
+                        Pay
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -78,4 +84,4 @@ function PaymentSimulationDialog({ open, handleClose, contract, handleOpenTokenT
     );
 }
 
-export default PaymentSimulationDialog;
+export default SellingContractPaymentDialog;

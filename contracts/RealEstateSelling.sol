@@ -1,16 +1,19 @@
 pragma solidity >=0.4.22 <0.8.0;
 
+import "./RealEstateRepository.sol";
+
 contract RealEstateSelling {
     enum STATE {REGISTERED, CONFIRMED, SUCCESSFULL, WITHDRAWN}
 
     uint256 contractId;
     uint256 realEstateId;
-    address seller;
+    address payable seller;
     address buyer;
     uint256 price;
     uint256 dueDate;
     uint256 paid;
     STATE state;
+    RealEstateRepository realEstateRepository;
 
     event SellingContractConfirmation(uint256 contractId, uint256 realEstateId);
 
@@ -21,10 +24,11 @@ contract RealEstateSelling {
     constructor(
         uint256 _contractId,
         uint256 _realEstateId,
-        address _seller,
+        address payable _seller,
         address _buyer,
         uint256 _price,
-        uint256 _dueDate
+        uint256 _dueDate,
+        address _realEstateRepository
     ) public {
         contractId = _contractId;
         realEstateId = _realEstateId;
@@ -33,6 +37,7 @@ contract RealEstateSelling {
         price = _price;
         dueDate = _dueDate;
         state = STATE.REGISTERED;
+        realEstateRepository = RealEstateRepository(_realEstateRepository);
     }
 
     function getSellingContract()
@@ -70,16 +75,20 @@ contract RealEstateSelling {
         emit SellingContractConfirmation(contractId, realEstateId);
     }
 
-    function registerRecievedPayment(uint256 amount) public {
+    function pay() public payable {
         require(
-            msg.sender == seller && state == STATE.CONFIRMED,
-            "msg.sender is not the seller or the contract is not in confirmed state"
+            msg.sender == buyer &&
+                state == STATE.CONFIRMED &&
+                price >= paid + msg.value,
+            "msg.sender is not the buyer or the contract is not in confirmed state or the sent value would overpay the price"
         );
-        paid += amount;
+        paid += msg.value;
         if (paid >= price) {
             state = STATE.SUCCESSFULL;
+            realEstateRepository.transferFrom(seller, buyer, realEstateId);
             emit SellingContractCompletion(contractId, realEstateId);
         }
+        seller.transfer(msg.value);
     }
 
     function withdraw() public {

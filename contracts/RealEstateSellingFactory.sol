@@ -45,7 +45,8 @@ contract RealEstateSellingFactory is Ownable {
                 msg.sender,
                 buyer,
                 price,
-                dueDate
+                dueDate,
+                address(realEstateRepository)
             );
         sellingContractsByRealEstateId[realEstateId].push(sellingContract);
         emit RealEstateSellingRegistration(

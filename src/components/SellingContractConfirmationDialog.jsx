@@ -11,7 +11,7 @@ import Alert from '@material-ui/lab/Alert';
 
 function SellingContractConfirmationDialog({ open, handleClose, contract, loadRealEstateSellingContracts }) {
     const web3 = new Web3(Web3.givenProvider);
-    const defaultDialogContentText = 'Buyer has to confirm (accept) the selling contract before any further action (payment simulation).';
+    const defaultDialogContentText = 'Buyer has to confirm (accept) the selling contract before any further action (payment).';
     const [dialogContentText, setDialogContentText] = React.useState(defaultDialogContentText);
 
     const handleConfirmation = async (contract) => {

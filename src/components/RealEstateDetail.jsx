@@ -28,6 +28,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import { Box } from '@material-ui/core';
 import MortgagesOnRealEstateDetail from './MortgagesOnRealEstateDetail';
 import { mortgageIntegerStateToString } from '../util/dataConversions';
+import TokenTransferApprovalDialog from './TokenTransferApprovalDialog'
 
 const IconLeftAccordionSummary = withStyles({
     expandIcon: {
@@ -58,6 +59,8 @@ const RealEstateDetail = ({ match, ipfs }) => {
     const [sellingContractRegistrationDisabled, setSellingContractRegistrationDisabled] = React.useState(false);
     const [sellingContractRegistrationNotSellerAlert, setSellingContractRegistrationNotSellerAlert] = React.useState(false);
     const [sellingContractRegistrationRequiredFieldsAlert, setSellingContractRegistrationRequiredFieldsAlert] = React.useState(false);
+    const [sellingContractAddressForTokenTransferDialog, setSellingContractAddressForTokenTransferDialog] = React.useState('');
+    const [tokenTransferDialogOpen, setTokenTransferDialogOpen] = React.useState(false);
 
     const web3 = new Web3(Web3.givenProvider);
     const realEstateRepositoryContract = new web3.eth.Contract(REAL_ESTATE_REPOSITORY.ABI, REAL_ESTATE_REPOSITORY.ADDRESS);
@@ -170,12 +173,21 @@ const RealEstateDetail = ({ match, ipfs }) => {
                 console.log(receipt);
             })
 
+        const nrOfRealEstateSellingContracts = await realEstateSellingFactoryContract.methods.getNrOfSellingContractsByTokenId(tokenId).call();
+        const sellingContractAddress = await realEstateSellingFactoryContract.methods.getSellingContractByRealEstateIdAndIndex(tokenId, nrOfRealEstateSellingContracts - 1).call();
+        setSellingContractAddressForTokenTransferDialog(sellingContractAddress);
+        setTokenTransferDialogOpen(true);
+
         setBuyer('');
         setPrice('');
         setDueDate('');
 
         loadRealEstateSellingContracts();
-    }
+    };
+
+    const handleCloseTokenTransferDialog = () => {
+        setTokenTransferDialogOpen(false);
+    };
 
     const loadMortgages = async () => {
         const mortgagesFromBlockchain = [];
@@ -253,6 +265,7 @@ const RealEstateDetail = ({ match, ipfs }) => {
                     <Grid container>
                         <RealEstateSellingContracts
                             realEstateSellingContracts={realEstateSellingContracts}
+                            loadRealEstate={loadRealEstate}
                             loadRealEstateSellingContracts={loadRealEstateSellingContracts}
                             setSellingContractRegistrationDisabled={setSellingContractRegistrationDisabled} />
                         <Grid item md={2}></Grid>
@@ -286,6 +299,11 @@ const RealEstateDetail = ({ match, ipfs }) => {
                         mortgages={mortgages} />
                 </AccordionDetails>
             </Accordion>
+            <TokenTransferApprovalDialog
+                open={tokenTransferDialogOpen}
+                handleClose={handleCloseTokenTransferDialog}
+                sellingContractAddress={sellingContractAddressForTokenTransferDialog}
+                loadRealEstateSellingContracts={loadRealEstateSellingContracts} />
         </>
     );
 };
