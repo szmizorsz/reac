@@ -27,7 +27,7 @@ const useRowStyles = makeStyles({
     },
 });
 
-function Row({ row, loadMortgages, loadLiquidityPoolData, loadLiquidityProviers }) {
+function Row({ row, loadMortgages, loadLiquidityPoolData, loadLiquidityProviers, availableCapital }) {
     const [open, setOpen] = React.useState(false);
     const classes = useRowStyles();
     const [mortgageApprovalDialogOpen, setMortgageApprovalDialogOpen] = React.useState(false);
@@ -169,7 +169,8 @@ function Row({ row, loadMortgages, loadLiquidityPoolData, loadLiquidityProviers 
                 handleClose={handleCloseMortgageApprovalDialog}
                 mortgageContract={contractForDialog}
                 loadMortgages={loadMortgages}
-                loadLiquidityPoolData={loadLiquidityPoolData} />
+                loadLiquidityPoolData={loadLiquidityPoolData}
+                availableCapital={availableCapital} />
             <MortgageRejectionDialog
                 open={mortgageRejectionDialogOpen}
                 handleClose={handleCloseMortgageRejectionDialog}
@@ -186,7 +187,13 @@ function Row({ row, loadMortgages, loadLiquidityPoolData, loadLiquidityProviers 
     );
 }
 
-export default function Mortgages({ mortgages, loadMortgages, loadLiquidityPoolData, loadLiquidityProviers }) {
+export default function Mortgages({
+    mortgages,
+    loadMortgages,
+    loadLiquidityPoolData,
+    loadLiquidityProviers,
+    availableCapital
+}) {
     return (
         <TableContainer component={Paper}>
             <Table aria-label="collapsible table">
@@ -212,7 +219,8 @@ export default function Mortgages({ mortgages, loadMortgages, loadLiquidityPoolD
                             row={row}
                             loadMortgages={loadMortgages}
                             loadLiquidityPoolData={loadLiquidityPoolData}
-                            loadLiquidityProviers={loadLiquidityProviers} />
+                            loadLiquidityProviers={loadLiquidityProviers}
+                            availableCapital={availableCapital} />
                     ))}
                 </TableBody>
             </Table>

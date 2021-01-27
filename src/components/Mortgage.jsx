@@ -134,7 +134,8 @@ const Mortgage = () => {
                             mortgages={mortgages}
                             loadMortgages={loadMortgages}
                             loadLiquidityPoolData={loadLiquidityPoolData}
-                            loadLiquidityProviers={loadLiquidityProviers} />
+                            loadLiquidityProviers={loadLiquidityProviers}
+                            availableCapital={availableCapital} />
                         <Button
                             onClick={() => { setMortgageApplicationDialogOpen(true) }}
                             variant="outlined"
@@ -162,7 +163,8 @@ const Mortgage = () => {
                 handleClose={handleCloseMortgageApplicationDialog}
                 mortgageLiquidityPoolContract={mortgageLiquidityPoolContract}
                 loadMortgages={loadMortgages}
-                loadLiquidityPoolData={loadLiquidityPoolData} />
+                loadLiquidityPoolData={loadLiquidityPoolData}
+                mortgages={mortgages} />
         </>
     );
 }

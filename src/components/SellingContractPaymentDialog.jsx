@@ -24,10 +24,6 @@ function SellingContractPaymentDialog({ open, handleClose, contract, loadRealEst
             setDialogContentText(<Alert severity="info">Only the buyer can pay the contract!</Alert>);
             return;
         }
-        console.log(parseFloat(Web3.utils.fromWei(sellingContractData._paid, 'ether')));
-        console.log(parseFloat(paid));
-        console.log(parseFloat(Web3.utils.fromWei(sellingContractData._paid, 'ether')) + parseFloat(paid));
-        console.log(parseFloat(Web3.utils.fromWei(sellingContractData._price, 'ether')));
         if (parseFloat(Web3.utils.fromWei(sellingContractData._paid, 'ether')) + parseFloat(paid) > parseFloat(Web3.utils.fromWei(sellingContractData._price, 'ether'))) {
             setDialogContentText(<Alert severity="info">You can not overpay the contract!</Alert>);
             return;

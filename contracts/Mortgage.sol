@@ -124,6 +124,10 @@ contract Mortgage {
             realEstateOwner == msg.sender,
             "the real estate owner has to repay the mortgage"
         );
+        require(
+            repaidAmount + msg.value <= borrowedAmount + interest,
+            "the sent amount would overpay the borrowed amount + interest"
+        );
         uint256 previouslyRepaidAmount = repaidAmount;
         repaidAmount += msg.value;
         if (repaidAmount >= borrowedAmount + interest) {

@@ -66,6 +66,13 @@ const MortgageLiquidityPoolData = ({ capital, collectibleInterest, collectedInte
     return (
         <Grid container className={classes.root}>
             <Grid item xs={12} md={1}>
+                <TextField
+                    InputProps={{ disableUnderline: true }}
+                    label="Interest rate" value={interestRate || ''}
+                    fullWidth
+                    margin="dense" />
+            </Grid>
+            <Grid item xs={12} md={1}>
             </Grid>
             <Grid item xs={12} md={2}>
                 <Doughnut
@@ -77,6 +84,8 @@ const MortgageLiquidityPoolData = ({ capital, collectibleInterest, collectedInte
                     {totalCapitalLabelText(capital)}
                 </Typography>
             </Grid>
+            <Grid item xs={12} md={1}>
+            </Grid>
             <Grid item xs={12} md={6}>
                 <HorizontalBar
                     data={barData}
@@ -85,15 +94,7 @@ const MortgageLiquidityPoolData = ({ capital, collectibleInterest, collectedInte
                     options={barOptions}
                 />
             </Grid>
-            <Grid item xs={12} md={1}>
-            </Grid>
-            <Grid item xs={12} md={1}>
-                <TextField
-                    InputProps={{ disableUnderline: true }}
-                    label="Interest rate" value={interestRate || ''}
-                    fullWidth
-                    margin="dense" />
-            </Grid>
+
         </Grid>
     );
 };

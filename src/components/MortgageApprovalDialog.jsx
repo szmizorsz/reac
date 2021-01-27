@@ -9,13 +9,28 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { GAS_LIMIT } from '../config/settings'
 import Web3 from 'web3';
 import DatePicker from "react-datepicker";
+import Alert from '@material-ui/lab/Alert';
 
-function MortgageApprovalDialog({ open, handleClose, mortgageContract, loadMortgages, loadLiquidityPoolData }) {
+function MortgageApprovalDialog({
+    open,
+    handleClose,
+    mortgageContract,
+    loadMortgages,
+    loadLiquidityPoolData,
+    availableCapital
+}) {
     const web3 = new Web3(Web3.givenProvider);
     const [amount, setAmount] = React.useState('');
     const [dueDate, setDueDate] = React.useState('');
+    const defaultDialogContentText = 'Please, specify the due date and the approved amount (ETH) that is not more than the available capital!';
+    const [dialogContentText, setDialogContentText] = React.useState(defaultDialogContentText);
 
     const handleMortgageApproval = async () => {
+        if (amount > availableCapital) {
+            setDialogContentText(<Alert severity="info">The approved amount is greater than the available capital!</Alert>);
+            return;
+        }
+
         const accounts = await web3.eth.getAccounts();
         const weiAmount = Web3.utils.toWei(amount.toString(), 'ether');
         let config = {
@@ -23,18 +38,23 @@ function MortgageApprovalDialog({ open, handleClose, mortgageContract, loadMortg
             from: accounts[0]
         }
         await mortgageContract.methods.approve(weiAmount, dueDate).send(config);
-        handleClose();
+        handleCloseWithDialogContentTextReset();
         loadMortgages();
         loadLiquidityPoolData();
     }
 
+    const handleCloseWithDialogContentTextReset = async () => {
+        setDialogContentText(defaultDialogContentText);
+        handleClose();
+    }
+
     return (
         <div>
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" disableBackdropClick>
+            <Dialog open={open} onClose={handleCloseWithDialogContentTextReset} aria-labelledby="form-dialog-title" disableBackdropClick>
                 <DialogTitle id="form-dialog-title">Mortgage approval</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Please, specify the due date and the approved amount (ETH)!
+                        {dialogContentText}
                     </DialogContentText>
                     <Box mb={10} mt={2}>
                         <DatePicker
@@ -55,7 +75,7 @@ function MortgageApprovalDialog({ open, handleClose, mortgageContract, loadMortg
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
+                    <Button onClick={handleCloseWithDialogContentTextReset} color="primary">
                         Cancel
                     </Button>
                     <Button onClick={() => { handleMortgageApproval() }} color="primary">

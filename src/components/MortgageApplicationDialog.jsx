@@ -8,13 +8,29 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { GAS_LIMIT } from '../config/settings'
 import Web3 from 'web3';
+import Alert from '@material-ui/lab/Alert';
 
-function MortgageApplicationDialog({ open, handleClose, mortgageLiquidityPoolContract, loadMortgages, loadLiquidityPoolData }) {
+function MortgageApplicationDialog({
+    open,
+    handleClose,
+    mortgageLiquidityPoolContract,
+    loadMortgages,
+    loadLiquidityPoolData,
+    mortgages
+}) {
     const web3 = new Web3(Web3.givenProvider);
     const [amount, setAmount] = React.useState('');
     const [realEstateId, setRealEstateId] = React.useState('');
+    const defaultDialogContentText = 'Please, specify the real esate ID and the amount (ETH)!';
+    const [dialogContentText, setDialogContentText] = React.useState(defaultDialogContentText);
 
     const handleMortgageApplication = async () => {
+        for (let mortgage of mortgages) {
+            if (mortgage._realEstateId === realEstateId && (mortgage._state === 'Requested' || mortgage._state === 'Approved')) {
+                setDialogContentText(<Alert severity="info">There is already an open mortgage of the given real estate!</Alert>);
+                return;
+            }
+        }
         const accounts = await web3.eth.getAccounts();
         const weiAmount = Web3.utils.toWei(amount.toString(), 'ether');
         let config = {
@@ -22,9 +38,14 @@ function MortgageApplicationDialog({ open, handleClose, mortgageLiquidityPoolCon
             from: accounts[0]
         }
         await mortgageLiquidityPoolContract.methods.applyForMortgage(realEstateId, weiAmount).send(config);
-        handleClose();
+        handleCloseWithDialogContentTextReset();
         loadMortgages();
         loadLiquidityPoolData();
+    }
+
+    const handleCloseWithDialogContentTextReset = async () => {
+        setDialogContentText(defaultDialogContentText);
+        handleClose();
     }
 
     return (
@@ -33,7 +54,7 @@ function MortgageApplicationDialog({ open, handleClose, mortgageLiquidityPoolCon
                 <DialogTitle id="form-dialog-title">Mortgage application</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Please, specify the real esate ID and the amount (ETH)!
+                        {dialogContentText}
                     </DialogContentText>
                     <TextField
                         autoFocus
@@ -57,7 +78,7 @@ function MortgageApplicationDialog({ open, handleClose, mortgageLiquidityPoolCon
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} color="primary">
+                    <Button onClick={handleCloseWithDialogContentTextReset} color="primary">
                         Cancel
                     </Button>
                     <Button onClick={() => { handleMortgageApplication() }} color="primary">
