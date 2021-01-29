@@ -1,12 +1,15 @@
 pragma solidity >=0.4.22 <0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./RealEstateRepository.sol";
 
 contract RealEstatePhotos is Ownable {
     struct RealEstatePhoto {
         string cid;
         string description;
     }
+
+    RealEstateRepository realEstateRepository;
 
     mapping(uint256 => RealEstatePhoto[]) private photos;
 
@@ -16,11 +19,19 @@ contract RealEstatePhotos is Ownable {
         string description
     );
 
+    constructor(address _realEstateRepository) public {
+        realEstateRepository = RealEstateRepository(_realEstateRepository);
+    }
+
     function registerRealEstatePhoto(
         uint256 realEstateId,
         string memory cid,
         string memory description
     ) public {
+        require(
+            msg.sender == realEstateRepository.ownerOf(realEstateId),
+            "msg.sender is not the proprietor"
+        );
         RealEstatePhoto memory realEstatePhoto;
         realEstatePhoto.cid = cid;
         realEstatePhoto.description = description;

@@ -3,6 +3,7 @@ const RealEstateRepository = artifacts.require("RealEstateRepository");
 const StringUtils = artifacts.require("StringUtils");
 const RealEstateSellingFactory = artifacts.require("RealEstateSellingFactory");
 const MortgageLiquidityPool = artifacts.require("MortgageLiquidityPool");
+const RealEstatePhotos = artifacts.require("RealEstatePhotos");
 
 const realEstateRegister = '0xC0F3b367AF79DEd43dBFd8e7026c1b1Db58D7b87';
 const mortgageApprover = '0xA819c28d5964c4038e96A2C29EAe72A5a9E5b420';
@@ -25,4 +26,6 @@ module.exports = async (deployer) => {
 	await mortgageLiquidityPoolInstance.setInterestRate(100);
 
 	await deployer.deploy(RealEstateSellingFactory, realEstateRepositoryInstance.address);
+
+	await deployer.deploy(RealEstatePhotos, realEstateRepositoryInstance.address);
 };

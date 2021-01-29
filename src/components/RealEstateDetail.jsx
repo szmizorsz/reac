@@ -61,6 +61,7 @@ const RealEstateDetail = ({ match, ipfs }) => {
     const [sellingContractRegistrationRequiredFieldsAlert, setSellingContractRegistrationRequiredFieldsAlert] = React.useState(false);
     const [sellingContractAddressForTokenTransferDialog, setSellingContractAddressForTokenTransferDialog] = React.useState('');
     const [tokenTransferDialogOpen, setTokenTransferDialogOpen] = React.useState(false);
+    const [realEstateNonProprietorAlert, setRealEstateNonProprietorAlert] = React.useState(false);
 
     const web3 = new Web3(Web3.givenProvider);
     const realEstateRepositoryContract = new web3.eth.Contract(REAL_ESTATE_REPOSITORY.ABI, REAL_ESTATE_REPOSITORY.ADDRESS);
@@ -91,11 +92,17 @@ const RealEstateDetail = ({ match, ipfs }) => {
 
     const handlePhotoUploadSubmit = async (event) => {
         event.preventDefault();
-
-        const source = await ipfs.add([...event.target[1].files])
-        const cid = source.path;
+        let inputfile = event.target[1].files;
+        setRealEstateNonProprietorAlert(false);
 
         const accounts = await web3.eth.getAccounts();
+        if (accounts[0] !== realEstate.proprietor) {
+            setRealEstateNonProprietorAlert(true);
+            return;
+        }
+        const source = await ipfs.add([...inputfile])
+        const cid = source.path;
+
         let config = {
             gas: GAS_LIMIT,
             from: accounts[0]
@@ -247,7 +254,8 @@ const RealEstateDetail = ({ match, ipfs }) => {
                                 description={description}
                                 setDescription={setDescription}
                                 file={file}
-                                setFile={setFile} />
+                                setFile={setFile}
+                                realEstateNonProprietorAlert={realEstateNonProprietorAlert} />
                         </Grid>
                         <Grid item md={2}></Grid>
                     </Grid>

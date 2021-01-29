@@ -1,5 +1,5 @@
 export const REAC_ACCESS_CONTROL = {
-  ADDRESS: '0xB6B7f2da2073D4DBD9e954311899847AB1a8A9b0',
+  ADDRESS: '0xb6b0E60EE3b13668e2117550d40018A5Adf77BE2',
   ABI: [
     {
       "inputs": [],
@@ -299,7 +299,7 @@ export const REAC_ACCESS_CONTROL = {
 }
 
 export const REAL_ESTATE_REPOSITORY = {
-  ADDRESS: '0xc434c58883aE1d056f708164B1e3E02C80479351',
+  ADDRESS: '0x9a4f5942521984C73b180bf34f22F18BDE0392D3',
   ABI: [
     {
       "inputs": [
@@ -830,8 +830,19 @@ export const REAL_ESTATE_REPOSITORY = {
 }
 
 export const REAL_ESTATE_PHOTOS = {
-  ADDRESS: '0x5d05F5F703e92A4462Ce4D51b18d47FA37D633B5',
+  ADDRESS: '0xf8A0E346A561177bfdCf102FC01Ae647138CCe18',
   ABI: [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_realEstateRepository",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
     {
       "anonymous": false,
       "inputs": [
@@ -994,7 +1005,7 @@ export const REAL_ESTATE_PHOTOS = {
 }
 
 export const REAL_ESTATE_SELLING_FACTORY = {
-  ADDRESS: '0xc14bDbD65a7a58F4AaCA8a7F4F9111520F7288C4',
+  ADDRESS: '0xf813c809FBa30b767a17284793e3d1daD99A7Fc6',
   ABI: [
     {
       "inputs": [
@@ -1359,7 +1370,7 @@ export const REAL_ESTATE_SELLING = {
 }
 
 export const MORTGAGE_LIQUIDITY_POOL = {
-  ADDRESS: '0xEF8fC1558167FBC07f3437DE540b1448Ca2E18a3',
+  ADDRESS: '0x319870aA378397250450fE03211bFD361A920613',
   ABI: [
     {
       "inputs": [
