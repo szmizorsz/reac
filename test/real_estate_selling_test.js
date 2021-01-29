@@ -1,3 +1,4 @@
+const ReacAccessControl = artifacts.require("ReacAccessControl");
 const RealEstateRepository = artifacts.require("RealEstateRepository");
 const RealEstateSellingFactory = artifacts.require("RealEstateSellingFactory");
 const RealEstateSelling = artifacts.require("RealEstateSelling");
@@ -7,9 +8,14 @@ const BN = web3.utils.BN;
 contract("RealEstateSelling", async function (accounts) {
     let instance;
     let realEstateRepositoryInstance;
+    const realEstateRegister = accounts[2];
+    let reacAccessControlInstance;
 
     beforeEach(async function () {
-        realEstateRepositoryInstance = await RealEstateRepository.new();
+        reacAccessControlInstance = await ReacAccessControl.new();
+        const realEstateRegisterRole = await reacAccessControlInstance.getRealEstateRegisterRole();
+        await reacAccessControlInstance.grantRole(realEstateRegisterRole, realEstateRegister);
+        realEstateRepositoryInstance = await RealEstateRepository.new(reacAccessControlInstance.address);
         instance = await RealEstateSellingFactory.new(realEstateRepositoryInstance.address);
     });
 
@@ -21,7 +27,7 @@ contract("RealEstateSelling", async function (accounts) {
     it("should reject the real estate selling contract registration if not the current owner sends it", async function () {
         let proprietor = accounts[1];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
         let realEstateId = 1;
         let buyer = accounts[2];
         let price = 200;
@@ -39,7 +45,7 @@ contract("RealEstateSelling", async function (accounts) {
     it("should register real estate selling contract", async function () {
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
         let realEstateId = 1;
         let buyer = accounts[1];
         let seller = accounts[0];
@@ -65,7 +71,7 @@ contract("RealEstateSelling", async function (accounts) {
     it("should return the nr of registered real estate selling contract", async function () {
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
         let realEstateId = 1;
         let buyer = accounts[1];
         let price = 200;
@@ -83,7 +89,7 @@ contract("RealEstateSelling", async function (accounts) {
     it("should return the real estate selling contract", async function () {
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
         let realEstateId = 1;
         let index = 0;
         let buyer = accounts[1];
@@ -109,7 +115,7 @@ contract("RealEstateSelling", async function (accounts) {
     it("should confirm the real estate selling contract", async function () {
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
         let realEstateId = 1;
         let buyer = accounts[1];
         let seller = proprietor;
@@ -136,7 +142,7 @@ contract("RealEstateSelling", async function (accounts) {
     it("should not confirm the real estate selling contract that is already confirmed", async function () {
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
         let realEstateId = 1;
         let buyer = accounts[1];
         let seller = proprietor;
@@ -161,7 +167,7 @@ contract("RealEstateSelling", async function (accounts) {
     it("should register the recieved payment in the selling contract", async function () {
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
         let realEstateId = 1;
         let buyer = accounts[1];
         let seller = proprietor;
@@ -195,7 +201,7 @@ contract("RealEstateSelling", async function (accounts) {
     it("should withdraw the registered selling contract", async function () {
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
         let realEstateId = 1;
         let buyer = accounts[1];
         let seller = proprietor;

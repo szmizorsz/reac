@@ -4,12 +4,14 @@ import "./Mortgage.sol";
 import "./RealEstateRepository.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "./ReacAccessControl.sol";
 
 contract MortgageLiquidityPool is Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _ids;
 
     RealEstateRepository realEstateRepository;
+    ReacAccessControl reacAccessControl;
 
     uint256 public capital;
     uint256 public collectibleInterest;
@@ -43,8 +45,11 @@ contract MortgageLiquidityPool is Ownable {
         uint256 amount
     );
 
-    constructor(address _realEstateRepository) public {
+    constructor(address _realEstateRepository, address _reacAccessControl)
+        public
+    {
         realEstateRepository = RealEstateRepository(_realEstateRepository);
+        reacAccessControl = ReacAccessControl(_reacAccessControl);
     }
 
     function setInterestRate(uint256 _interestRate) public onlyOwner {
@@ -145,6 +150,7 @@ contract MortgageLiquidityPool is Ownable {
         Mortgage mortgage =
             new Mortgage(
                 address(this),
+                address(reacAccessControl),
                 mortgageId,
                 realEstateId,
                 msg.sender,

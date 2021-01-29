@@ -1,3 +1,4 @@
+const ReacAccessControl = artifacts.require("ReacAccessControl");
 const RealEstateRepository = artifacts.require("RealEstateRepository");
 const MortgageLiquidityPool = artifacts.require("MortgageLiquidityPool");
 const Mortgage = artifacts.require("Mortgage");
@@ -9,10 +10,19 @@ contract("MortgageLiquidityPool", async function (accounts) {
     let instance;
     let realEstateRepositoryInstance;
     let interestRate = 100;
+    const realEstateRegister = accounts[2];
+    const mortgageApprover = accounts[3];
+    const notMortgageApprover = accounts[4];
+    let reacAccessControlInstance;
 
     beforeEach(async function () {
-        realEstateRepositoryInstance = await RealEstateRepository.new();
-        instance = await MortgageLiquidityPool.new(realEstateRepositoryInstance.address);
+        reacAccessControlInstance = await ReacAccessControl.new();
+        const realEstateRegisterRole = await reacAccessControlInstance.getRealEstateRegisterRole();
+        await reacAccessControlInstance.grantRole(realEstateRegisterRole, realEstateRegister);
+        const mortgageApproverRole = await reacAccessControlInstance.getMortgageApproverRole();
+        await reacAccessControlInstance.grantRole(mortgageApproverRole, mortgageApprover);
+        realEstateRepositoryInstance = await RealEstateRepository.new(reacAccessControlInstance.address);
+        instance = await MortgageLiquidityPool.new(realEstateRepositoryInstance.address, reacAccessControlInstance.address);
         await instance.setInterestRate(interestRate);
     });
 
@@ -56,7 +66,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
     it("should apply for mortgage", async function () {
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
         let realEstateId = 1;
         let amount = 200;
         let result = await instance.applyForMortgage(realEstateId, amount);
@@ -72,7 +82,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
     it("should reject the mortgage application if not the current owner sends it", async function () {
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
         let realEstateId = 1;
         let amount = 200;
         await truffleAssert.reverts(
@@ -83,7 +93,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
     it("should get mortgage data", async function () {
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
         let realEstateId = 1;
         let amount = 200;
         await instance.applyForMortgage(realEstateId, amount);
@@ -105,7 +115,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
     it("should get mortgage data by real estate", async function () {
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
         let realEstateId = 1;
         let amount = 200;
         await instance.applyForMortgage(realEstateId, amount);
@@ -131,7 +141,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
 
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
 
         let realEstateId = 1;
         let requestedAmount = 200;
@@ -141,7 +151,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
         let dueDate = 3000;
         let mortgageAddress = await instance.getMortgageByRealEstateIdAndIndex(realEstateId, 0);
         let mortgageInstance = await Mortgage.at(mortgageAddress);
-        let result = await mortgageInstance.approve(approvedAmount, dueDate);
+        let result = await mortgageInstance.approve(approvedAmount, dueDate, { from: mortgageApprover });
 
         truffleAssert.eventEmitted(result, 'MortgageApproval');
         truffleAssert.eventEmitted(result, 'MortgageApproval', (e) => {
@@ -177,7 +187,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
 
         let proprietor = accounts[0];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
 
         let realEstateId = 1;
         let requestedAmount = 200;
@@ -185,7 +195,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
 
         let mortgageAddress = await instance.getMortgageByRealEstateIdAndIndex(realEstateId, 0);
         let mortgageInstance = await Mortgage.at(mortgageAddress);
-        let result = await mortgageInstance.reject();
+        let result = await mortgageInstance.reject({ from: mortgageApprover });
 
         truffleAssert.eventEmitted(result, 'MortgageRejection');
         truffleAssert.eventEmitted(result, 'MortgageRejection', (e) => {
@@ -195,6 +205,30 @@ contract("MortgageLiquidityPool", async function (accounts) {
         }, 'event params incorrect');
         let mortgage = await mortgageInstance.getMortgage();
         assert(mortgage._state.toNumber() === 2);
+    });
+
+    it("should not approve mortgage if the caller does not have mortgage approver role", async function () {
+        let provider = accounts[1];
+        let providedLiquidity = 1000;
+        await instance.injectLiquidity({ from: provider, value: providedLiquidity });
+
+        let proprietor = accounts[0];
+        let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
+
+        let realEstateId = 1;
+        let requestedAmount = 200;
+        await instance.applyForMortgage(realEstateId, requestedAmount);
+
+        let mortgageAddress = await instance.getMortgageByRealEstateIdAndIndex(realEstateId, 0);
+        let mortgageInstance = await Mortgage.at(mortgageAddress);
+
+        let approvedAmount = 150;
+        let dueDate = 3000;
+
+        await truffleAssert.reverts(
+            mortgageInstance.approve(approvedAmount, dueDate, { from: notMortgageApprover }),
+            "Caller does not have mortgage approver role");
     });
 
     it("should repay mortgage with capital first", async function () {
@@ -208,7 +242,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
 
         let proprietor = accounts[2];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
 
         let realEstateId = 1;
         let requestedAmount = 300;
@@ -218,7 +252,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
         let dueDate = 3000;
         let mortgageAddress = await instance.getMortgageByRealEstateIdAndIndex(realEstateId, 0);
         let mortgageInstance = await Mortgage.at(mortgageAddress);
-        await mortgageInstance.approve(approvedAmount, dueDate);
+        await mortgageInstance.approve(approvedAmount, dueDate, { from: mortgageApprover });
 
         //Before repayment
         let availableCapital = await instance.availableCapital();
@@ -283,7 +317,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
 
         let proprietor = accounts[2];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
 
         let realEstateId = 1;
         let requestedAmount = 400;
@@ -293,7 +327,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
         let dueDate = 3000;
         let mortgageAddress = await instance.getMortgageByRealEstateIdAndIndex(realEstateId, 0);
         let mortgageInstance = await Mortgage.at(mortgageAddress);
-        await mortgageInstance.approve(approvedAmount, dueDate);
+        await mortgageInstance.approve(approvedAmount, dueDate, { from: mortgageApprover });
 
         //Before repayment
         let availableCapital = await instance.availableCapital();
@@ -360,7 +394,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
 
         let proprietor = accounts[2];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
 
         let realEstateId = 1;
         let requestedAmount = 400;
@@ -370,7 +404,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
         let dueDate = 3000;
         let mortgageAddress = await instance.getMortgageByRealEstateIdAndIndex(realEstateId, 0);
         let mortgageInstance = await Mortgage.at(mortgageAddress);
-        await mortgageInstance.approve(approvedAmount, dueDate);
+        await mortgageInstance.approve(approvedAmount, dueDate, { from: mortgageApprover });
 
         // Repay
         let repaidCapital = 400;
@@ -423,7 +457,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
 
         let proprietor = accounts[2];
         let tokenURI = "QmVB3rL9ZCk8SYvsMRiTERkeU4AYExui2tLZ6iiqEhKAMe";
-        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI);
+        await realEstateRepositoryInstance.registerRealEstate(proprietor, tokenURI, { from: realEstateRegister });
 
         let realEstateId = 1;
         let requestedAmount = 400;
@@ -433,7 +467,7 @@ contract("MortgageLiquidityPool", async function (accounts) {
         let dueDate = 3000;
         let mortgageAddress = await instance.getMortgageByRealEstateIdAndIndex(realEstateId, 0);
         let mortgageInstance = await Mortgage.at(mortgageAddress);
-        await mortgageInstance.approve(approvedAmount, dueDate);
+        await mortgageInstance.approve(approvedAmount, dueDate, { from: mortgageApprover });
 
         // Repay
         let repaidCapital = 400;

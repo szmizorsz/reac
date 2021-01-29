@@ -10,6 +10,7 @@ import { GAS_LIMIT } from '../config/settings'
 import Web3 from 'web3';
 import DatePicker from "react-datepicker";
 import Alert from '@material-ui/lab/Alert';
+import { REAC_ACCESS_CONTROL } from '../config/contracts';
 
 function MortgageApprovalDialog({
     open,
@@ -24,14 +25,24 @@ function MortgageApprovalDialog({
     const [dueDate, setDueDate] = React.useState('');
     const defaultDialogContentText = 'Please, specify the due date and the approved amount (ETH) that is not more than the available capital!';
     const [dialogContentText, setDialogContentText] = React.useState(defaultDialogContentText);
+    const reacAccessControlContract = new web3.eth.Contract(REAC_ACCESS_CONTROL.ABI, REAC_ACCESS_CONTROL.ADDRESS);
 
     const handleMortgageApproval = async () => {
+        setDialogContentText(defaultDialogContentText);
         if (amount > availableCapital) {
             setDialogContentText(<Alert severity="info">The approved amount is greater than the available capital!</Alert>);
             return;
         }
 
         const accounts = await web3.eth.getAccounts();
+        debugger
+        const mortgageApproverRole = await reacAccessControlContract.methods.getMortgageApproverRole().call();
+        const isSenderMortgageAprover = await reacAccessControlContract.methods.hasRole(mortgageApproverRole, accounts[0]).call();
+        if (!isSenderMortgageAprover) {
+            setDialogContentText(<Alert severity="info">Only an account with mortgage approver role can approve or reject a mortgage!</Alert>);
+            return;
+        }
+
         const weiAmount = Web3.utils.toWei(amount.toString(), 'ether');
         let config = {
             gas: GAS_LIMIT,

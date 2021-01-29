@@ -1,6 +1,7 @@
 pragma solidity >=0.4.22 <0.8.0;
 
 import "./MortgageLiquidityPool.sol";
+import "./ReacAccessControl.sol";
 
 contract Mortgage {
     enum STATE {REQUESTED, APPROVED, REJECTED, REPAID}
@@ -16,6 +17,7 @@ contract Mortgage {
     STATE public state;
     uint256 public dueDate;
     MortgageLiquidityPool mortgageLiquidityPool;
+    ReacAccessControl reacAccessControl;
 
     event MortgageApproval(
         uint256 mortgageId,
@@ -46,12 +48,14 @@ contract Mortgage {
 
     constructor(
         address _mortgageLiquidityPool,
+        address _reacAccessControl,
         uint256 _mortgageId,
         uint256 _realEstateId,
         address payable _realEstateOwner,
         uint256 _requestedAmount
     ) public {
         mortgageLiquidityPool = MortgageLiquidityPool(_mortgageLiquidityPool);
+        reacAccessControl = ReacAccessControl(_reacAccessControl);
         mortgageId = _mortgageId;
         realEstateId = _realEstateId;
         realEstateOwner = _realEstateOwner;
@@ -90,6 +94,13 @@ contract Mortgage {
     }
 
     function approve(uint256 _amount, uint256 _dueDate) public {
+        require(
+            reacAccessControl.hasRole(
+                reacAccessControl.getMortgageApproverRole(),
+                msg.sender
+            ),
+            "Caller does not have mortgage approver role"
+        );
         require(state == STATE.REQUESTED, "mortgage is not in requested state");
         require(
             _amount <= mortgageLiquidityPool.availableCapital(),
@@ -113,6 +124,13 @@ contract Mortgage {
     }
 
     function reject() public {
+        require(
+            reacAccessControl.hasRole(
+                reacAccessControl.getMortgageApproverRole(),
+                msg.sender
+            ),
+            "Caller does not have mortgage approver role"
+        );
         require(state == STATE.REQUESTED, "mortgage is not in requested state");
         state = STATE.REJECTED;
         emit MortgageRejection(mortgageId, realEstateId, realEstateOwner);

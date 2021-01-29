@@ -5,6 +5,8 @@ import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import Web3 from 'web3'
 import { GAS_LIMIT } from '../config/settings'
+import { REAC_ACCESS_CONTROL } from '../config/contracts';
+import Alert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -33,8 +35,32 @@ function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
     const [longitude, setLongitude] = React.useState('');
     const [height, setHeight] = React.useState('');
 
+    const [noRegisterRoleAlert, setNoRegisterRoleAlert] = React.useState(false);
+    const web3 = new Web3(Web3.givenProvider);
+    const reacAccessControlContract = new web3.eth.Contract(REAC_ACCESS_CONTROL.ABI, REAC_ACCESS_CONTROL.ADDRESS);
+
+
+    const displayNoRealEstateRegisterRoleAlert = () => {
+        let alert;
+        if (noRegisterRoleAlert) {
+            alert = <Alert severity="info">Only an account with real estate registration role can register a new real estate!</Alert>
+        }
+        return alert;
+    }
+
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        const web3 = new Web3(Web3.givenProvider);
+        const accounts = await web3.eth.getAccounts();
+
+        setNoRegisterRoleAlert(false);
+        const realEstateRegisterRole = await reacAccessControlContract.methods.getRealEstateRegisterRole().call();
+        const isSenderRealEstateRegister = await reacAccessControlContract.methods.hasRole(realEstateRegisterRole, accounts[0]).call();
+        if (!isSenderRealEstateRegister) {
+            setNoRegisterRoleAlert(true);
+            return;
+        }
 
         const realEstate = {
             externalId: externalId,
@@ -49,8 +75,6 @@ function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
 
         const file = await ipfs.add(Buffer.from(JSON.stringify(realEstate)));
 
-        const web3 = new Web3(Web3.givenProvider);
-        const accounts = await web3.eth.getAccounts();
         let config = {
             gas: GAS_LIMIT,
             from: accounts[0]
@@ -165,6 +189,7 @@ function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
                     Register
                 </Button>
             </form>
+            {displayNoRealEstateRegisterRoleAlert()}
         </Box>
     )
 }
