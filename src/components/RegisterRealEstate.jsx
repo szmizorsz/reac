@@ -30,6 +30,7 @@ function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
     const [type, setType] = React.useState('');
     const [country, setCountry] = React.useState('');
     const [city, setCity] = React.useState('');
+    const [zip, setZip] = React.useState('');
     const [addressLine, setAddressLine] = React.useState('');
     const [latitude, setLatitude] = React.useState('');
     const [longitude, setLongitude] = React.useState('');
@@ -67,6 +68,7 @@ function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
             type: type,
             country: country,
             city: city,
+            zip: zip,
             addressLine: addressLine,
             latitude: latitude,
             longitude: longitude,
@@ -86,6 +88,7 @@ function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
         setType('');
         setCountry('');
         setCity('');
+        setZip('');
         setAddressLine('');
         setLatitude();
         setLongitude();
@@ -151,6 +154,15 @@ function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
                     onInput={e => setAddressLine(e.target.value)}
                     label="Address line"
                     margin="dense" />
+                <TextField
+                    variant="outlined"
+                    fullWidth
+                    required
+                    id="Zip"
+                    value={zip}
+                    onInput={e => setZip(e.target.value)}
+                    label="Zip"
+                    margin="dense" />
                 <Typography variant="h6" gutterBottom>
                     Coordinates
                 </Typography>
@@ -183,13 +195,13 @@ function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
                     margin="dense" />
                 <Button
                     fullWidth
-                    variant="contained"
+                    variant="outlined"
                     color="primary"
                     type="submit">
                     Register
                 </Button>
+                {displayNoRealEstateRegisterRoleAlert()}
             </form>
-            {displayNoRealEstateRegisterRoleAlert()}
         </Box>
     )
 }

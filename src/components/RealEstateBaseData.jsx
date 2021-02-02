@@ -35,7 +35,10 @@ const RealEstateBaseData = ({ realEstate }) => {
                 <Grid item xs={12} md={2}>
                     <TextField label="City" value={realEstate.city || ''} fullWidth margin="dense" />
                 </Grid>
-                <Grid item xs={12} md={7}>
+                <Grid item xs={12} md={2}>
+                    <TextField label="Zip" value={realEstate.zip || ''} fullWidth margin="dense" />
+                </Grid>
+                <Grid item xs={12} md={5}>
                     <TextField label="Address" value={realEstate.addressLine || ''} fullWidth margin="dense" />
                 </Grid>
                 <Grid item xs={12} md={3}>

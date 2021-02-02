@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core/'
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -50,17 +51,26 @@ function RealEstateList({ ipfs }) {
     }, []);
 
     return (
-        <Box mt={2}>
+        <>
+            <Box mt={2} mb={2}>
+                <Button component={Link} to="/register"
+                    variant="outlined"
+                    color="primary"
+                    type="submit">
+                    Register
+            </Button>
+            </Box>
             <TableContainer className={classes.table} component={Paper}>
                 <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
                             <TableCell>Token Id</TableCell>
                             <TableCell>External Id</TableCell>
+                            <TableCell>Type</TableCell>
                             <TableCell>Address</TableCell>
                             <TableCell>City</TableCell>
                             <TableCell>Country</TableCell>
-                            <TableCell>Type</TableCell>
+                            <TableCell>Zip</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -70,16 +80,17 @@ function RealEstateList({ ipfs }) {
                                     <Link to={`/realestate/${row.tokenId}`}>{row.tokenId}</Link>
                                 </TableCell>
                                 <TableCell>{row.externalId}</TableCell>
+                                <TableCell>{row.type}</TableCell>
                                 <TableCell>{row.addressLine}</TableCell>
                                 <TableCell>{row.city}</TableCell>
                                 <TableCell>{row.country}</TableCell>
-                                <TableCell>{row.type}</TableCell>
+                                <TableCell>{row.zip}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-        </Box>
+        </>
     );
 }
 
