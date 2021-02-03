@@ -69,7 +69,6 @@ function Row({ row, loadMortgages, loadLiquidityPoolData, loadLiquidityProviers,
                 <Button
                     onClick={() => { handleOpenApprovalDialog(row.contract) }}
                     variant="outlined"
-                    color="primary"
                     type="submit">
                     Approve
                 </Button>;
@@ -84,7 +83,6 @@ function Row({ row, loadMortgages, loadLiquidityPoolData, loadLiquidityProviers,
                 <Button
                     onClick={() => { handleOpenRejectionDialog(row.contract) }}
                     variant="outlined"
-                    color="primary"
                     type="submit">
                     Reject
                 </Button>;
@@ -99,7 +97,6 @@ function Row({ row, loadMortgages, loadLiquidityPoolData, loadLiquidityProviers,
                 <Button
                     onClick={() => { handleOpenRepaymentDialog(row.contract) }}
                     variant="outlined"
-                    color="primary"
                     type="submit">
                     Repay
                 </Button>;

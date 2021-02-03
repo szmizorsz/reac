@@ -17,11 +17,10 @@ const doughnutData = {
     labels: ['Lent capital', 'Available capital'],
     datasets: [
         {
-            label: '# of Votes',
             data: [12, 19],
             backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
             ],
             borderColor: [
                 'rgba(255, 99, 132, 1)',
@@ -36,10 +35,10 @@ const barData = {
     labels: ['Total capital', 'Collected interest', 'Collectible interest'],
     datasets: [
         {
-            backgroundColor: 'rgba(255, 159, 64, 0.2)',
+            backgroundColor: 'rgba(255, 159, 64, 0.6)',
             borderColor: 'rgba(255, 159, 64, 1)',
             borderWidth: 1,
-            hoverBackgroundColor: 'rgba(255, 159, 64, 0.4)',
+            hoverBackgroundColor: 'rgba(255, 159, 64, 0.6)',
             hoverBorderColor: 'rgba(255, 159, 64, 1)'
         }
     ]

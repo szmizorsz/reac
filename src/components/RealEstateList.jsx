@@ -55,7 +55,6 @@ function RealEstateList({ ipfs }) {
             <Box mt={2} mb={2}>
                 <Button component={Link} to="/register"
                     variant="outlined"
-                    color="primary"
                     type="submit">
                     Register
             </Button>

@@ -6,7 +6,8 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-import MenuBar from './components/MenuBar'
+import MenuBar from './components/MenuBar';
+import HomePage from './components/HomePage';
 import RealEstateList from './components/RealEstateList';
 import RegisterRealEstate from './components/RegisterRealEstate';
 import RealEstateDetail from './components/RealEstateDetail';
@@ -15,6 +16,7 @@ import { REAL_ESTATE_REPOSITORY } from './config/contracts';
 import { IPFS } from './config/settings'
 import ipfsClient from "ipfs-http-client";
 import getWeb3 from "./util/getWeb3";
+import Box from '@material-ui/core/Box';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,29 +46,34 @@ function App() {
         <Grid container>
           <Grid item md={2}></Grid>
           <Grid item xs={12} md={8}>
-            <div className="content">
-              <Switch>
-                <Route path="/register">
-                  <RegisterRealEstate
-                    realEstateRepositoryContract={realEstateRepositoryContract}
-                    ipfs={ipfs}
-                  />
-                </Route>
-                <Route path="/list">
-                  <RealEstateList
-                    ipfs={ipfs}
-                  />
-                </Route>
-                <Route path="/realestate/:tokenId">
-                  <RealEstateDetail
-                    ipfs={ipfs}
-                  />
-                </Route>
-                <Route path="/mortgage">
-                  <Mortgage />
-                </Route>
-              </Switch>
-            </div>
+            <Box mt={10}>
+              <div className="content">
+                <Switch>
+                  <Route path="/home">
+                    <HomePage />
+                  </Route>
+                  <Route path="/register">
+                    <RegisterRealEstate
+                      realEstateRepositoryContract={realEstateRepositoryContract}
+                      ipfs={ipfs}
+                    />
+                  </Route>
+                  <Route path="/list">
+                    <RealEstateList
+                      ipfs={ipfs}
+                    />
+                  </Route>
+                  <Route path="/realestate/:tokenId">
+                    <RealEstateDetail
+                      ipfs={ipfs}
+                    />
+                  </Route>
+                  <Route path="/mortgage">
+                    <Mortgage />
+                  </Route>
+                </Switch>
+              </div>
+            </Box>
           </Grid>
           <Grid item md={2}></Grid>
         </Grid>

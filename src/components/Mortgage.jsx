@@ -115,14 +115,12 @@ const Mortgage = () => {
                         <Button
                             onClick={() => { setMortgageLiquidityInjectionDialogOpen(true) }}
                             variant="outlined"
-                            color="primary"
                             type="submit">
                             Inject liquidity
                         </Button>
                         <Button
                             onClick={() => { setMortgageLiquidityWithdrawalDialogOpen(true) }}
                             variant="outlined"
-                            color="primary"
                             type="submit">
                             Withdraw
                         </Button>
@@ -139,7 +137,6 @@ const Mortgage = () => {
                         <Button
                             onClick={() => { setMortgageApplicationDialogOpen(true) }}
                             variant="outlined"
-                            color="primary"
                             type="submit">
                             Apply for mortgage
                         </Button>

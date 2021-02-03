@@ -196,7 +196,6 @@ function RegisterRealEstate({ realEstateRepositoryContract, ipfs }) {
                 <Button
                     fullWidth
                     variant="outlined"
-                    color="primary"
                     type="submit">
                     Register
                 </Button>

@@ -83,7 +83,6 @@ const RealEstateSellingContractRegistration = ({
                     <Button
                         fullWidth
                         variant="outlined"
-                        color="primary"
                         type="submit"
                         disabled={disabled}>
                         Register

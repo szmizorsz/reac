@@ -44,7 +44,6 @@ const RealEstatePhotoUpload = ({ handleSubmit, description, setDescription, file
                 <Button
                     fullWidth
                     variant="outlined"
-                    color="primary"
                     type="submit">
                     Upload
             </Button>

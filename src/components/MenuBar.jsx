@@ -1,54 +1,53 @@
 import React from 'react';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import { Link } from "react-router-dom";
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+import logo from "../images/real-estate-icon.png";
 
 const useStyles = makeStyles((theme) => ({
-    menuButton: {
-        marginRight: theme.spacing(2),
+    header: {
+        flexGrow: 1,
+        backgroundColor: "black",
+        color: "white",
+        boxShadow: "0px 0px 0px 0px"
     },
+    logo: {
+        maxWidth: 70,
+    }
 }));
 
 function MenuBar() {
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
 
     return (
-        <AppBar position="static">
-            <Toolbar>
-                <IconButton
-                    edge="start"
-                    className={classes.menuButton}
-                    color="inherit"
-                    aria-label="menu"
-                    aria-controls="simple-menu"
-                    aria-haspopup="true"
-                    onClick={handleClick}>
-                    <MenuIcon />
-                </IconButton>
-                <Menu
-                    id="simple-menu"
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                >
-                    <MenuItem onClick={handleClose}><Link to="/list">List</Link></MenuItem>
-                    <MenuItem onClick={handleClose}><Link to="/mortgage">Mortgage</Link></MenuItem>
-                </Menu>
+        <AppBar position="fixed" className={classes.header}>
+            <Toolbar variant="dense">
+                <Grid container>
+                    <Grid item md={2}></Grid>
+                    <Grid item xs={12} md={3}>
+                        <Box mt={0.5}>
+                            <Link to="/home">
+                                <img src={logo} alt="Real Estate Management Platform" className={classes.logo} />
+                            </Link>
+                        </Box>
+                    </Grid>
+                    <Grid item md={3}></Grid>
+                    <Grid item md={1}>
+                        <Box mt={0.5}>
+                            <Button color="inherit" component={Link} to="/list">Real estates</Button>
+                        </Box>
+                    </Grid>
+                    <Grid item md={1}>
+                        <Box mt={0.5}>
+                            <Button color="inherit" component={Link} to="/mortgage">Mortgage</Button>
+                        </Box>
+                    </Grid>
+                    <Grid item md={2}></Grid>
+                </Grid>
             </Toolbar>
         </AppBar>
     );
