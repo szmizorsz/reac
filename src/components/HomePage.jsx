@@ -1,12 +1,15 @@
 import React from 'react'
-import Typography from '@material-ui/core/Typography'
+import Overview from './Overview.jsx'
+import Technology from './Technology';
+import Footer from './Footer';
 
-const HomePage = (params) => {
-
+const HomePage = () => {
     return (
-        <Typography align="center" variant="h6">
-            Real Estate Management Platform
-        </Typography>
+        <>
+            <Overview />
+            <Technology />
+            <Footer />
+        </>
     );
 
 }
