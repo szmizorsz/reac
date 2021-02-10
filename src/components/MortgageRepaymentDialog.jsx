@@ -18,6 +18,13 @@ function MortgageRepaymentDialog({ open, handleClose, mortgageContract, loadMort
 
     const handleMortgageRepayment = async () => {
         const mortgage = await mortgageContract.methods.getMortgage().call();
+        const accounts = await web3.eth.getAccounts();
+
+        if (mortgage._realEstateOwner !== accounts[0]) {
+            setDialogContentText(<Alert severity="info">Only the real estate owner (borrower) can repay!</Alert>);
+            return;
+        }
+
         const borrowedAmount = parseFloat(Web3.utils.fromWei(mortgage._borrowedAmount, 'ether'));
         const interest = parseFloat(Web3.utils.fromWei(mortgage._interest, 'ether'));
         const repaidAmount = parseFloat(Web3.utils.fromWei(mortgage._repaidAmount, 'ether'));
@@ -26,7 +33,6 @@ function MortgageRepaymentDialog({ open, handleClose, mortgageContract, loadMort
             return;
         }
 
-        const accounts = await web3.eth.getAccounts();
         const weiAmount = Web3.utils.toWei(amount.toString(), 'ether');
         let config = {
             gas: GAS_LIMIT,

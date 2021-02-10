@@ -3,11 +3,9 @@ pragma solidity >=0.4.22 <0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./StringUtils.sol";
 import "./ReacAccessControl.sol";
 
 contract RealEstateRepository is ERC721, Ownable {
-    using StringUtils for address;
     using Counters for Counters.Counter;
     Counters.Counter private _ids;
     ReacAccessControl reacAccessControl;

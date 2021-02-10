@@ -29,7 +29,7 @@ function MortgageApprovalDialog({
 
     const handleMortgageApproval = async () => {
         setDialogContentText(defaultDialogContentText);
-        if (amount > availableCapital) {
+        if (parseFloat(amount) > parseFloat(availableCapital)) {
             setDialogContentText(<Alert severity="info">The approved amount is greater than the available capital!</Alert>);
             return;
         }

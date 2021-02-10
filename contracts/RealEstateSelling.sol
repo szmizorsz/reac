@@ -76,11 +76,14 @@ contract RealEstateSelling {
     }
 
     function pay() public payable {
+        require(msg.sender == buyer, "msg.sender is not the buyer");
         require(
-            msg.sender == buyer &&
-                state == STATE.CONFIRMED &&
-                price >= paid + msg.value,
-            "msg.sender is not the buyer or the contract is not in confirmed state or the sent value would overpay the price"
+            state == STATE.CONFIRMED,
+            "the contract is not in confirmed state"
+        );
+        require(
+            price >= paid + msg.value,
+            "the sent value would overpay the price"
         );
         paid += msg.value;
         if (paid >= price) {
@@ -92,12 +95,12 @@ contract RealEstateSelling {
     }
 
     function withdraw() public {
+        require(msg.sender == seller, "msg.sender is not the seller");
         require(
-            msg.sender == seller &&
-                (state == STATE.REGISTERED || state == STATE.CONFIRMED) &&
-                paid == 0,
-            "msg.sender is not the seller or the contract is not in registered or in confirmed state or the contract already got paid"
+            state == STATE.REGISTERED || state == STATE.CONFIRMED,
+            "the contract is not in registered or in confirmed state"
         );
+        require(paid == 0, "the contract already got paid");
         state = STATE.WITHDRAWN;
         emit SellingContractWithdraw(contractId, realEstateId);
     }

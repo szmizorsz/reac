@@ -1,6 +1,5 @@
 const ReacAccessControl = artifacts.require("ReacAccessControl");
 const RealEstateRepository = artifacts.require("RealEstateRepository");
-const StringUtils = artifacts.require("StringUtils");
 const RealEstateSellingFactory = artifacts.require("RealEstateSellingFactory");
 const MortgageLiquidityPool = artifacts.require("MortgageLiquidityPool");
 const RealEstatePhotos = artifacts.require("RealEstatePhotos");
@@ -16,8 +15,6 @@ module.exports = async (deployer) => {
 	const mortgageApproverRole = await reacAccessControlInstance.getMortgageApproverRole();
 	await reacAccessControlInstance.grantRole(mortgageApproverRole, mortgageApprover);
 
-	await deployer.deploy(StringUtils);
-	deployer.link(StringUtils, [RealEstateRepository]);
 	await deployer.deploy(RealEstateRepository, reacAccessControlInstance.address);
 	realEstateRepositoryInstance = await RealEstateRepository.deployed();
 
