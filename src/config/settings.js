@@ -8,5 +8,5 @@ export const IPFS = {
 }
 
 export const GOOGLE_MAPS = {
-    API_KEY: "API-KEY"
+    API_KEY: "AIzaSyCBjhgeBlP362WIFsAGXuSKSde2_lCaYiU"
 }

@@ -18,7 +18,7 @@ const RealEstateMap = (props) => {
         <Box m={3}>
             <div style={{ height: '40vh', width: '100%' }} >
                 <GoogleMapReact
-                    //bootstrapURLKeys={{ key: GOOGLE_MAPS.API_KEY }}
+                    bootstrapURLKeys={{ key: GOOGLE_MAPS.API_KEY }}
                     defaultCenter={{ lat: 10, lng: 10 }}
                     center={center}
                     defaultZoom={11}

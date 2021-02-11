@@ -37,7 +37,7 @@ const RealEstatePhotos = ({ realEstatePhotos }) => {
             <GridList className={classes.gridList} cols={2.5}>
                 {realEstatePhotos.map((row) => (
                     <GridListTile key={row.cid + row.description}>
-                        <a href={IPFS.PUBLIC_GATEWAY + row.cid} target="_blank">
+                        <a href={IPFS.PUBLIC_GATEWAY + row.cid} target="_blank" rel="noopener noreferrer">
                             <img src={IPFS.PUBLIC_GATEWAY + row.cid} alt={row.description} className="MuiGridListTile-imgFullHeight" />
                         </a>
                         <GridListTileBar
