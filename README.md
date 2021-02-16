@@ -20,4 +20,5 @@ You can find the contract addresses in src/config/contracts.js
 The app is deployed with Fleek and available on the following URLs:<br />
 Fleek CDN: https://royal-mode-4747.on.fleek.co/#/home<br />
 IPFS with ENS: https://real-estate-management.eth.link/#/home<br />
+<br />
 
