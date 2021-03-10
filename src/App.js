@@ -49,7 +49,7 @@ function App() {
             <Box mt={10}>
               <div className="content">
                 <Switch>
-                  <Route path="/home">
+                  <Route path="/">
                     <HomePage />
                   </Route>
                   <Route path="/register">
