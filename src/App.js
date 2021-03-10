@@ -49,9 +49,6 @@ function App() {
             <Box mt={10}>
               <div className="content">
                 <Switch>
-                  <Route path="/">
-                    <HomePage />
-                  </Route>
                   <Route path="/register">
                     <RegisterRealEstate
                       realEstateRepositoryContract={realEstateRepositoryContract}
@@ -70,6 +67,9 @@ function App() {
                   </Route>
                   <Route path="/mortgage">
                     <Mortgage />
+                  </Route>
+                  <Route path="/">
+                    <HomePage />
                   </Route>
                 </Switch>
               </div>

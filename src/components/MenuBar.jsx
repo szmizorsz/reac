@@ -30,7 +30,7 @@ function MenuBar() {
                     <Grid item md={2}></Grid>
                     <Grid item xs={12} md={3}>
                         <Box mt={0.5}>
-                            <Link to="/home">
+                            <Link to="/">
                                 <img src={logo} alt="Real Estate Management Platform" className={classes.logo} />
                             </Link>
                         </Box>
